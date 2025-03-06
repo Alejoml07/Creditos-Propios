@@ -11,33 +11,33 @@
         <!-- Marco de la foto -->
         <div class="photo-placeholder">
           <video #videoElement *ngIf="showVideo" autoplay class="photo-box-video"></video>
-  
+        
           <img *ngIf="photoBase64 && !showVideo" [src]="photoBase64" class="photo-box" alt="Foto tomada"/>
-  
+        
           <div *ngIf="!showVideo && !photoBase64 && !isLoading" class="photo-instruction" (click)="openCamera()">
-            <p>📷 Haz clic aquí para tomar una foto</p>
+            <p>📷 Toca aquí para tomar una foto</p>
           </div>
-  
+        
           <div *ngIf="isLoading" class="loader"></div>
-  
+        
           <div *ngIf="validationComplete" [ngClass]="{'success-check': isCorrectPhoto, 'error-x': !isCorrectPhoto}">
             {{ isCorrectPhoto ? '✔' : '✖' }}
           </div>
-  
+        
           <div *ngIf="validationComplete && !isCorrectPhoto" class="retry-option">
-            <!-- <p>{{ validationMessage }}</p> -->
             <button type="button" class="retry-btn" (click)="retryCapture()">Reintentar</button>
           </div>
-  
-          <!-- 🎥 Botón para capturar la foto -->
+        
+          <!-- Botón flotante para capturar la foto -->
           <button *ngIf="showVideo" (click)="capturePhoto()" class="capture-btn"></button>
         </div>
-  
+        
+        <!-- Subir Imagen -->
         <div class="upload-container">
           <input #photoInput type="file" accept="image/jpeg,image/png" capture="user" (change)="onPhotoUpload($event)" class="hidden-input"/>
           <a class="upload-link" (click)="photoInput.click()"> Subir Imagen</a>
         </div>
-  
+        
         <canvas #imageCanvas class="hidden-canvas"></canvas>
       </div>
   

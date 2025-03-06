@@ -28,10 +28,10 @@
 }
 
 .photo-placeholder {
-    width: min(80vw, 250px);  /* Se ajusta al ancho del viewport, pero sin superar 250px */
-    height: min(80vw, 250px); /* Mantiene el mismo valor del width para asegurar un círculo */
+    width: min(80vw, 250px);
+    height: min(80vw, 250px);
     border: 4px solid #ccc;
-    border-radius: 50%; /* Garantiza que sea un círculo */
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;

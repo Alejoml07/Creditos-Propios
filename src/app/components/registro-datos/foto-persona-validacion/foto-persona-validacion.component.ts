@@ -35,18 +35,27 @@ export class FotoPersonaValidacionComponent {
     this.photoBase64 = null;
     this.validationComplete = false;
     this.cdRef.detectChanges();
-
+  
     const constraints = {
-      video: { facingMode: this.useRearCamera ? "environment" : "user" }
+      video: {
+        facingMode: this.useRearCamera ? "environment" : "user",
+        width: { ideal: 1080 },
+        height: { ideal: 1920 }
+      }
     };
-
-    navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-      this.videoStream = stream;
-      this.videoElement.nativeElement.srcObject = stream;
-    }).catch(error => {
-      this.cameraError = 'No se pudo acceder a la cámara. Verifica permisos.';
-    });
+  
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(stream => {
+        this.videoStream = stream;
+        const videoElement = this.videoElement.nativeElement;
+        videoElement.srcObject = stream;
+        videoElement.play();
+      })
+      .catch(error => {
+        this.cameraError = 'No se pudo acceder a la cámara. Verifica permisos.';
+      });
   }
+  
 
   toggleCamera(): void {
     this.useRearCamera = !this.useRearCamera;
@@ -56,26 +65,27 @@ export class FotoPersonaValidacionComponent {
 
   capturePhoto(): void {
     if (!this.videoElement || !this.imageCanvas) return;
-
+  
     const video = this.videoElement.nativeElement;
     const canvas = this.imageCanvas.nativeElement;
     const context = canvas.getContext('2d');
-
-    canvas.width = 400;
-    canvas.height = 250;
+  
+    // Ajustar el tamaño del canvas para capturar la imagen correctamente
+    canvas.width = video.videoWidth || 400;
+    canvas.height = video.videoHeight || 250;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    this.stopCamera();
-
+  
+    this.stopCamera(); // Detiene la cámara tras capturar la imagen
+  
     this.isLoading = true;
     this.validationComplete = false;
     this.cdRef.detectChanges();
-
+  
     setTimeout(() => {
       this.photoBase64 = canvas.toDataURL('image/png');
       this.validatePhoto(this.photoBase64);
     }, 100);
   }
-
   stopCamera(): void {
     if (this.videoStream) {
       this.videoStream.getTracks().forEach(track => track.stop());
