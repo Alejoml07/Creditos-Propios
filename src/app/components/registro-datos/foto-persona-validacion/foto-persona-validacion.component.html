@@ -36,14 +36,16 @@
         <!-- Subir Imagen o Tomar Foto -->
         <div class="upload-container">
           <input #photoInput 
-                type="file" 
-                accept="image/*" 
-                capture="environment" 
-                (change)="onPhotoUpload($event)" 
-                class="hidden-input"/>
+                 type="file" 
+                 accept="image/*" 
+                 capture="environment" 
+                 multiple 
+                 (change)="onPhotoUpload($event)" 
+                 class="hidden-input"/>
           
-          <a class="upload-link" (click)="photoInput.click()">📷 Subir o Tomar Foto</a>
+          <a class="upload-link" (click)="photoInput.click()">📷 Seleccionar o Tomar Foto</a>
         </div>
+        
 
         
         <canvas #imageCanvas class="hidden-canvas"></canvas>

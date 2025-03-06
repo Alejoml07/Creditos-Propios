@@ -104,8 +104,8 @@ export class FotoPersonaValidacionComponent {
 
   onPhotoUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0]; // Solo procesamos la primera imagen
   
       const allowedTypes = ['image/jpeg', 'image/png'];
       if (!allowedTypes.includes(file.type)) {
