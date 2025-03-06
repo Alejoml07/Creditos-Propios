@@ -1,0 +1,59 @@
+<div class="container">
+  <h1>¡Haz tu compra ahora con Leonisa! <br> ¡Paga después!</h1>
+  <p>Ingresa tus datos para obtener tu cupo con Leonisa</p>
+
+  <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="approbe-form">
+
+    <div class="form-group">
+      <select 
+        formControlName="documentType" 
+        [ngClass]="{'input-error': isInvalid('documentType')}"
+      >
+        <option value="" disabled selected>Tipo de documento*</option>
+        <option value="CC">Cédula de Ciudadanía</option>
+        <option value="CE">Cédula de Extranjería</option>
+        <option value="PAS">Pasaporte</option>
+        <option value="NIT">NIT</option>
+      </select>
+      <div class="error-message" *ngIf="isInvalid('documentType')">
+        El campo no puede estar vacío.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="input-container">
+        <input 
+          type="text" 
+          formControlName="document" 
+          id="document" 
+          placeholder=" " 
+          [ngClass]="{'input-error': isInvalid('document')}"
+        />
+        <label for="document">Número de documento*</label>
+      </div>
+      <div class="error-message" *ngIf="isInvalid('document')">
+        El campo no puede estar vacío.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="input-container">
+        <input 
+          type="text" 
+          formControlName="cellular" 
+          id="cellular" 
+          placeholder=" " 
+          [ngClass]="{'input-error': isInvalid('cellular')}"
+        />
+        <label for="cellular">Celular*</label>
+      </div>
+      <div class="error-message" *ngIf="isInvalid('cellular')">
+        El campo no puede estar vacío.
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="myForm.invalid">
+      Continuar
+    </button>
+  </form>
+</div>

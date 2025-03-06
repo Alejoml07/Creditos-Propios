@@ -1,0 +1,55 @@
+<div class="container">
+    <div class="text-center">
+      <h1 class="title">Captura tu Documento de Identidad</h1>
+      <p class="subtitle">Por favor, sube o toma una foto clara de tu documento de identidad.</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="form-container">
+      <div class="photo-section">
+        <h3 class="section-title">Subir Foto</h3>
+        <div class="photo-placeholder">
+           <!-- Botón para cambiar entre cámara frontal y trasera -->
+            <button type="button" class="toggle-camera-btn" (click)="toggleCamera()"></button>
+        
+            <!-- Loading animado mientras se procesa la imagen -->
+            <div *ngIf="isLoading" class="loader"></div>
+        
+            <!-- Check o X según la validación -->
+            <div *ngIf="validationComplete" [ngClass]="{'success-check': IsCorrectPhoto, 'error-x': !IsCorrectPhoto}">
+              {{ IsCorrectPhoto ? '✔' : '✖' }}
+            </div>
+        
+            <!-- Opción de reintentar si la validación falla -->
+            <div *ngIf="validationComplete && !IsCorrectPhoto" class="retry-option">
+              <!-- <p>No se detectó una cédula válida.</p> -->
+              <button type="button" class="retry-btn" (click)="retryCapture()">Reintentar</button>
+            </div>
+        
+            <!-- Video de la cámara -->
+            <video #videoElement *ngIf="showVideo" autoplay class="photo-box"></video>
+        
+            <!-- Indicador cuando no hay foto ni video -->
+            <div *ngIf="!showVideo && !isLoading && !validationComplete" class="photo-instruction" (click)="openCamera()">
+              <p>📷 Haz clic aquí para tomar una foto</p>
+            </div>
+        
+            <!-- Botón de captura dentro del cuadro -->
+            <button *ngIf="showVideo" (click)="capturePhoto()" class="capture-btn"></button>
+        </div>
+        
+
+        <!-- Enlace para subir imagen -->
+        <div class="upload-container">
+          <input #photoInput type="file" accept="image/jpeg,image/png" capture="environment" (change)="onPhotoUpload($event)" class="hidden-input"/>
+          <a class="upload-link" (click)="photoInput.click()"> Subir Imagen</a>
+        </div>
+
+        <!-- Canvas oculto para procesar la imagen -->
+        <canvas #imageCanvas class="hidden-canvas"></canvas>
+      </div>
+
+      <button class="continue-btn" type="submit" >
+        Continuar
+      </button>
+    </form>
+</div>
