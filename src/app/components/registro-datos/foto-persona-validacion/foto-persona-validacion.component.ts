@@ -106,23 +106,23 @@ export class FotoPersonaValidacionComponent {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-
+  
       const allowedTypes = ['image/jpeg', 'image/png'];
       if (!allowedTypes.includes(file.type)) {
         this.photoBase64 = null;
         return;
       }
-
+  
       const reader = new FileReader();
       reader.onload = () => {
         this.isLoading = true;
         this.validationComplete = false;
         this.cdRef.detectChanges();
-
+  
         setTimeout(() => {
           this.photoBase64 = reader.result as string;
           this.validatePhoto(this.photoBase64);
-        }, 2000);
+        }, 1000);
       };
       reader.readAsDataURL(file);
     }
