@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertaService } from 'src/app/shared/service/alerta.service';
-import { RekognitionService } from 'src/app/shared/service/rekognition.service';
-
+import { UsuariosService } from 'src/app/shared/service/usuarios.service';
 
 @Component({
   selector: 'app-datos-basicos',
@@ -13,31 +11,91 @@ import { RekognitionService } from 'src/app/shared/service/rekognition.service';
 export class DatosBasicosComponent {
   myForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(private fb: FormBuilder, private router: Router, private  usuariosService: UsuariosService) {}
 
   ngOnInit(): void {
-    const noSpecialChars = /^[A-Za-z0-9 ]*$/;
+    const numericPattern = /^[0-9]*$/;
+    const lettersOnlyPattern = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/; 
+
 
     this.myForm = this.fb.group({
-      documentType: ['', Validators.required],
-      document: ['',[Validators.required, Validators.pattern(noSpecialChars)]],
-      cellular: ['',[Validators.required, Validators.pattern(noSpecialChars)]
-      ]
+      document: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(numericPattern),
+          Validators.minLength(6), 
+          Validators.maxLength(11)
+        ]
+      ],
+      cellular: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(numericPattern),
+          Validators.minLength(10),
+          Validators.maxLength(10)
+        ]
+      ],
+      lastName: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(lettersOnlyPattern),
+          Validators.minLength(2),
+          Validators.maxLength(50)
+        ]
+      ],
+      documentExpedition: ['', Validators.required],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          Validators.maxLength(100)
+        ]
+      ],
+      dataPolicy: [false, Validators.requiredTrue]
+
     });
   }
 
   isInvalid(field: string): boolean {
-    return this.myForm.get(field)?.invalid && (this.myForm.get(field)?.touched || this.myForm.get(field)?.dirty);
+    const control = this.myForm.get(field);
+    return !!(control && control.invalid && (control.touched || control.dirty));
   }
 
   onSubmit(): void {
     if (this.myForm.valid) {
-      console.log('Datos del formulario:', this.myForm.value);
-      this.router.navigate(['/registro/informacion-complementaria']);
+      const formData = this.myForm.value;
+      localStorage.setItem('datosBasicos', JSON.stringify(formData));
+      console.log('Datos del formulario:', formData);
 
+      this.registrarEstudioCredito(formData.document);
+
+      this.router.navigate(['/registro/foto-validacion']);
+    } else {
+      this.myForm.markAllAsTouched();
     }
   }
 
-  
+  registrarEstudioCredito(cedula: string): void {
+    const estudioCredito = {
+      IdCliente: cedula,
+      IdPais: 169,
+      FechaEstudio: null,
+      Estado: null,
+      CupoAsignado: null,
+      EntidadValidadora: null
+    };
 
+    this.usuariosService.addEstudioCredito(estudioCredito).subscribe({
+      next: (response) => {
+        console.log('Estudio de crédito registrado:', response);
+      },
+      error: (error) => {
+        console.error('Error al registrar estudio de crédito:', error);
+      }
+    });
+  }
 }

@@ -21,6 +21,8 @@ export class DocumentoValidacionComponent {
   @ViewChild('videoElement') videoElement!: ElementRef;
   @ViewChild('imageCanvas') imageCanvas!: ElementRef;
   useRearCamera: any;
+  isDesktop: boolean = false;
+
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -28,6 +30,10 @@ export class DocumentoValidacionComponent {
     private openIaService: OpenIaService,
     private router: Router
   ) {}
+
+  ngOnInit() {
+    this.isDesktop = window.innerWidth > 768; // Detecta si es PC o móvil
+  }
 
   openCamera(): void {
     this.cameraError = null;
@@ -94,41 +100,42 @@ export class DocumentoValidacionComponent {
 }
 
 
-  onPhotoUpload(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
+onPhotoUpload(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0]; // Solo tomamos la primera imagen
 
-      const allowedTypes = ['image/jpeg', 'image/png'];
-      if (!allowedTypes.includes(file.type)) {
-        this.photoBase64 = null;
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.isLoading = true;
-        this.validationComplete = false;
-        this.cdRef.detectChanges();
-
-        setTimeout(() => {
-          this.photoBase64 = reader.result as string;
-          this.validatePhoto(this.photoBase64);
-        }, 2000);
-      };
-      reader.readAsDataURL(file);
+    const allowedTypes = ['image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      this.photoBase64 = null;
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.isLoading = true;
+      this.validationComplete = false;
+      this.cdRef.detectChanges();
+
+      setTimeout(() => {
+        this.photoBase64 = reader.result as string;
+        this.validatePhoto(this.photoBase64);
+      }, 1000);
+    };
+    reader.readAsDataURL(file);
   }
+}
+
 
   validatePhoto(imageBase64: string): void {
     const base64Data = imageBase64.split(',')[1];
 
-    Swal.fire({
-      title: 'Validando documento...',
-      html: 'Por favor, espera mientras verificamos tu documento.',
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading()
-    });
+    // Swal.fire({
+    //   title: 'Validando documento...',
+    //   html: 'Por favor, espera mientras verificamos tu documento.',
+    //   allowOutsideClick: false,
+    //   didOpen: () => Swal.showLoading()
+    // });
 
     this.openIaService.analyzeDocument(base64Data).subscribe(
       validationResponse => {
@@ -180,7 +187,7 @@ export class DocumentoValidacionComponent {
   // Simular proceso de validación (ejemplo: cerrar el modal después de 3 segundos)
   setTimeout(() => {
     Swal.close(); // Cerrar modal de carga 
-    this.router.navigate(['/registro/foto-validacion']);
+    this.router.navigate(['/registro/documento-back-validacion']);
 
   }, 3000);
 }

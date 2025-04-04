@@ -1,7 +1,7 @@
 <div class="container">
     <div class="text-center">
       <h1 class="title">Captura tu Documento de Identidad</h1>
-      <p class="subtitle">Por favor, sube o toma una foto clara a la <strong>cara frontal</strong> de tu documento de identidad.</p>
+      <p class="subtitle">Por favor, sube o toma una foto clara a la <strong>cara trasera</strong> de tu documento de identidad.</p>
     </div>
 
     <form class="form-container">
@@ -27,10 +27,12 @@
         
             <video #videoElement *ngIf="showVideo" autoplay class="photo-box"></video>
         
+            <!-- Indicador cuando no hay foto ni video -->
             <div *ngIf="!showVideo && !isLoading && !validationComplete" class="photo-instruction" >
               <!-- <p>📷 Haz clic aquí para tomar una foto</p> -->
             </div>
         
+            <!-- Botón de captura dentro del cuadro -->
             <button *ngIf="showVideo" (click)="capturePhoto()" class="capture-btn"></button>
         </div>
 

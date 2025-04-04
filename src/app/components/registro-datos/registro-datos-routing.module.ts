@@ -5,6 +5,9 @@ import { TratamientoDatosComponent } from './tratamiento-datos/tratamiento-datos
 import { InformacionComplementariaComponent } from './informacion-complementaria/informacion-complementaria.component';
 import { DocumentoValidacionComponent } from './documento-validacion/documento-validacion.component';
 import { FotoPersonaValidacionComponent } from './foto-persona-validacion/foto-persona-validacion.component';
+import { DocumentoTraseraValidacionComponent } from './documento-trasera-validacion/documento-trasera-validacion.component';
+import { CodigoOtpComponent } from './codigo-otp/codigo-otp.component';
+import { AprobacionCreditoComponent } from './aprobacion-credito/aprobacion-credito.component';
 
 const routes: Routes = [
   {
@@ -35,11 +38,28 @@ const routes: Routes = [
 
       },
       {
+        path: 'documento-back-validacion',
+        component: DocumentoTraseraValidacionComponent,
+        // canActivate: [authGuard]
+
+      },
+      {
         path: 'foto-validacion',
         component: FotoPersonaValidacionComponent,        
         // canActivate: [authGuard]     
         
       },
+      {
+        path: 'codigo-otp',
+        component: CodigoOtpComponent,
+        // canActivate: [authGuard]
+      },
+      {
+        path: 'aprobacion-credito',
+        component: AprobacionCreditoComponent,
+        // canActivate: [authGuard]
+      },
+
 
       
     ]

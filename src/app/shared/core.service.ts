@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 export abstract class CoreService {
   protected http: HttpClient;
   // private urlBase = environment.urlPuntosLeonisa;
-  private urlBase = environment.urlPuntosLeonisa;
+  private urlBase = environment.urlCreditosPropios;
 
   constructor(http: HttpClient) {
     this.http = http;

@@ -4,35 +4,35 @@
 
   <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="approbe-form">
 
-    <div class="form-group">
-      <div class="input-container">
-        <input type="text" formControlName="firstName" id="firstName" placeholder=" " [ngClass]="{'input-error': isInvalid('firstName')}" />
-        <label for="firstName">Primer nombre*</label>
-      </div>
-      <div class="error-message" *ngIf="isInvalid('firstName')">
-        El campo no puede estar vacío.
-      </div>
-    </div>
+
 
     <div class="form-group">
       <div class="input-container">
-        <input type="text" formControlName="lastName" id="lastName" placeholder=" " [ngClass]="{'input-error': isInvalid('lastName')}" />
-        <label for="lastName">Primer apellido*</label>
+        <input 
+          type="text" 
+          formControlName="lastName" 
+          id="lastName" 
+          placeholder=" " 
+          [ngClass]="{'input-error': isInvalid('lastName')}"
+        />
+        <label for="lastName">Primer Apellido*</label>
       </div>
       <div class="error-message" *ngIf="isInvalid('lastName')">
-        El campo no puede estar vacío.
+        <ng-container *ngIf="myForm.get('lastName')?.errors?.['required']">
+          El apellido es obligatorio.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('lastName')?.errors?.['pattern']">
+          Solo se permiten letras.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('lastName')?.errors?.['minlength']">
+          Debe tener al menos 2 caracteres.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('lastName')?.errors?.['maxlength']">
+          Máximo 50 caracteres.
+        </ng-container>
       </div>
     </div>
 
-    <div class="form-group">
-      <div class="input-container">
-        <input type="date" formControlName="birthDate" id="birthDate" placeholder=" " [ngClass]="{'input-error': isInvalid('birthDate')}" />
-        <label for="birthDate">Fecha de nacimiento*</label>
-      </div>
-      <div class="error-message" *ngIf="isInvalid('birthDate')">
-        Selecciona una fecha válida.
-      </div>
-    </div>
 
     <div class="form-group">
       <div class="input-container">
@@ -44,30 +44,30 @@
       </div>
     </div>
 
-    <div class="form-group">
-      <select 
-        formControlName="gender" 
-        [ngClass]="{'input-error': isInvalid('gender')}"
-      >
-      <option value="" disabled selected>Género*</option>
-      <option value="M">Masculino</option>
-      <option value="F">Femenino</option>
-      <option value="O">Otro</option>
-      </select>
-      <div class="error-message" *ngIf="isInvalid('gender')">
-        El campo no puede estar vacío.
-      </div>
-    </div>
 
     
 
     <div class="form-group">
       <div class="input-container">
-        <input type="email" formControlName="email" id="email" placeholder=" " [ngClass]="{'input-error': isInvalid('email')}" />
+        <input 
+          type="email" 
+          formControlName="email" 
+          id="email" 
+          placeholder=" " 
+          [ngClass]="{'input-error': isInvalid('email')}"
+        />
         <label for="email">Correo Electrónico*</label>
       </div>
       <div class="error-message" *ngIf="isInvalid('email')">
-        El campo no puede estar vacío.
+        <ng-container *ngIf="myForm.get('email')?.errors?.['required']">
+          El correo es obligatorio.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('email')?.errors?.['email']">
+          Ingresa un correo válido.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('email')?.errors?.['maxlength']">
+          Máximo 100 caracteres permitidos.
+        </ng-container>
       </div>
     </div>
 

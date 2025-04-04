@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { OpenIaService } from 'src/app/shared/service/open-ia.service';
 import { RekognitionService } from 'src/app/shared/service/rekognition.service';
+import { UsuariosService } from 'src/app/shared/service/usuarios.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -12,22 +14,31 @@ export class FotoPersonaValidacionComponent {
   showVideo: boolean = false;
   cameraError: string | null = null;
   videoStream: MediaStream | null = null;
-  isLoading = false; // Estado de carga
-  validationComplete = false; // Indica si la validación terminó
-  photoBase64: string | null = null; // Base64 de la imagen
-  isCorrectPhoto = false; // Indica si la foto es válida
-  validationMessage: string = ''; // Mensaje de validación
-  useRearCamera = false; // Alterna entre cámara frontal y trasera
+  isLoading = false; 
+  validationComplete = false; 
+  photoBase64: string | null = null; 
+  isCorrectPhoto = false; 
+  validationMessage: string = ''; 
+  useRearCamera = false; 
+  isDesktop: boolean = false;
 
   @ViewChild('videoElement') videoElement!: ElementRef;
   @ViewChild('imageCanvas') imageCanvas!: ElementRef;
+  @ViewChild('fileGallery') fileGallery!: ElementRef;
+
 
   constructor(
     private cdRef: ChangeDetectorRef,
     private rekognitionService: RekognitionService,
-    private openIaService: OpenIaService
+    private openIaService: OpenIaService,
+    private router: Router,
+    private usuariosService: UsuariosService,
     
   ) {}
+
+  ngOnInit() {
+    this.isDesktop = window.innerWidth > 768; // Detecta si es PC o móvil
+  }
 
   openCamera(): void {
     this.cameraError = null;
@@ -70,12 +81,11 @@ export class FotoPersonaValidacionComponent {
     const canvas = this.imageCanvas.nativeElement;
     const context = canvas.getContext('2d');
   
-    // Ajustar el tamaño del canvas para capturar la imagen correctamente
     canvas.width = video.videoWidth || 400;
     canvas.height = video.videoHeight || 250;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
   
-    this.stopCamera(); // Detiene la cámara tras capturar la imagen
+    this.stopCamera(); 
   
     this.isLoading = true;
     this.validationComplete = false;
@@ -86,6 +96,7 @@ export class FotoPersonaValidacionComponent {
       this.validatePhoto(this.photoBase64);
     }, 100);
   }
+
   stopCamera(): void {
     if (this.videoStream) {
       this.videoStream.getTracks().forEach(track => track.stop());
@@ -105,20 +116,20 @@ export class FotoPersonaValidacionComponent {
   onPhotoUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      const file = input.files[0]; // Solo procesamos la primera imagen
-  
+      const file = input.files[0]; 
+
       const allowedTypes = ['image/jpeg', 'image/png'];
       if (!allowedTypes.includes(file.type)) {
         this.photoBase64 = null;
         return;
       }
-  
+
       const reader = new FileReader();
       reader.onload = () => {
         this.isLoading = true;
         this.validationComplete = false;
         this.cdRef.detectChanges();
-  
+
         setTimeout(() => {
           this.photoBase64 = reader.result as string;
           this.validatePhoto(this.photoBase64);
@@ -128,15 +139,10 @@ export class FotoPersonaValidacionComponent {
     }
   }
 
+
+
   validatePhoto(imageBase64: string): void {
     const base64Data = imageBase64.split(',')[1];
-
-    Swal.fire({
-      title: 'Validando imagen...',
-      html: 'Por favor, espera mientras verificamos tu foto.',
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading()
-    });
 
     this.openIaService.analyzeImage(base64Data).subscribe(response => {
       Swal.close();
@@ -148,7 +154,6 @@ export class FotoPersonaValidacionComponent {
         this.isCorrectPhoto = false;
         this.validationMessage = response.razon || "La imagen no es válida.";
       }
-
       this.isLoading = false;
       this.validationComplete = true;
       this.cdRef.detectChanges();
@@ -163,29 +168,56 @@ export class FotoPersonaValidacionComponent {
   }
 
   onSubmit(): void {
-    if (!this.isCorrectPhoto) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Foto no válida',
-        text: this.validationMessage,
-      });
+    const datosRaw = localStorage.getItem('datosBasicos');
+  
+    if (!datosRaw) {
+      console.error('No se encontraron datos en localStorage');
       return;
     }
+  
+    const datos = JSON.parse(datosRaw);
+    const body = {
+      Cedula: datos.document,
+      FechaExpedicion: datos.documentExpedition // Debe estar en formato YYYY-MM-DD
+    };
+  
+    this.mostrarAlertaCarga();
 
+    this.router.navigate(['/registro/codigo-otp']);
+
+    // this.usuariosService.validarUsuario(body).subscribe({
+    //   next: (response) => {
+    //     console.log('Respuesta del servicio UsuariosService:', response);
+    //     Swal.close();
+    //     this.router.navigate(['/registro/codigo-otp']);
+    //   },
+    //   error: (error) => {
+    //     console.error('Error al validar usuario:', error);
+    //     Swal.close();
+    //     Swal.fire({
+    //       icon: 'error',
+    //       title: 'Error de validación',
+    //       text: 'Ocurrió un error al validar la información. Intenta nuevamente.',
+    //     });
+    //   }
+    // });
+  }
+
+  mostrarAlertaCarga(): void {
     Swal.fire({
-      title: 'Procesando...',
-      html: 'Por favor, espera un momento.',
+      title: '<span style="color: #00d9ff; font-weight: bold; font-size: 24px;">Pay</span>',
+      html: `
+        <p style="color: #333; font-size: 16px;">Espera un momento, estamos validando tu información</p>
+      `,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      showConfirmButton: false,
       allowOutsideClick: false,
-      didOpen: () => Swal.showLoading()
+      allowEscapeKey: false,
+      background: '#fff',
+      padding: '20px',
+      width: '400px',
     });
-
-    setTimeout(() => {
-      Swal.close();
-      Swal.fire({
-        icon: 'success',
-        title: 'Foto validada correctamente',
-        text: 'Tu foto ha sido aceptada.',
-      });
-    }, 3000);
   }
 }

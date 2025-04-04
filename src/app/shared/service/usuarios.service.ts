@@ -16,30 +16,19 @@ export class UsuariosService extends CoreService  {
     super(http);
 }
 
-
-validarCedulaCupo(jsonData: any) {
-  return this.post<any>('/cupoejecutiva/rest/v1/CreditosDLM/ValidarCupoKaiowa', jsonData);  
+consultarCedula(jsonData: any): Observable<any> {
+  return this.post<any>('/AsignarCupo',jsonData);
 }
 
-obtenerMunicipios(): Observable<any[]> {
-  return this.http.get<any[]>('../../../assets/json/departamentos.json');
+validarUsuario(body: any): Observable<any> {
+  return this.post('/ValidacionIdentidadExpedicion', body); 
 }
 
-simularCredito(jsonData: any): Observable<any> {
-  return this.post<any>('/cupoejecutiva/rest/v1/CreditosDLM/GetSimulador',jsonData);
+addEstudioCredito(body: any): Observable<any> {
+  return this.post('/AddEstudioCredito', body); 
 }
 
-getProducto(jsonData: any): Observable<any> {
-  return this.post<any>('/cupoejecutiva/rest/v1/CreditosDLM/GetProducto',jsonData);
-}
 
-desencriptarJson(jsonData: any): Observable<any> {
-  return this.post<any>('/cupoejecutiva/rest/v1/CreditosDLM/DesencriptarJson',jsonData);
-}
-
-validarIVA(jsonData: any): Observable<any> {
-  return this.post<any>('/cupoejecutiva/rest/v1/CreditosDLM/ValidarIVA',jsonData);
-}
 
 
 

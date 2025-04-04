@@ -9,6 +9,9 @@ import { TratamientoDatosComponent } from './tratamiento-datos/tratamiento-datos
 import { InformacionComplementariaComponent } from './informacion-complementaria/informacion-complementaria.component';
 import { DocumentoValidacionComponent } from './documento-validacion/documento-validacion.component';
 import { FotoPersonaValidacionComponent } from './foto-persona-validacion/foto-persona-validacion.component';
+import { DocumentoTraseraValidacionComponent } from './documento-trasera-validacion/documento-trasera-validacion.component';
+import { CodigoOtpComponent } from './codigo-otp/codigo-otp.component';
+import { AprobacionCreditoComponent } from './aprobacion-credito/aprobacion-credito.component';
 
 
 @NgModule({
@@ -17,7 +20,10 @@ import { FotoPersonaValidacionComponent } from './foto-persona-validacion/foto-p
     TratamientoDatosComponent,
     InformacionComplementariaComponent,
     DocumentoValidacionComponent,
-    FotoPersonaValidacionComponent
+    FotoPersonaValidacionComponent,
+    DocumentoTraseraValidacionComponent,
+    CodigoOtpComponent,
+    AprobacionCreditoComponent
   ],
   imports: [
     CommonModule,

@@ -5,34 +5,58 @@
   <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="approbe-form">
 
     <div class="form-group">
-      <select 
-        formControlName="documentType" 
-        [ngClass]="{'input-error': isInvalid('documentType')}"
-      >
-        <option value="" disabled selected>Tipo de documento*</option>
-        <option value="CC">Cédula de Ciudadanía</option>
-        <option value="CE">Cédula de Extranjería</option>
-        <option value="PAS">Pasaporte</option>
-        <option value="NIT">NIT</option>
-      </select>
-      <div class="error-message" *ngIf="isInvalid('documentType')">
-        El campo no puede estar vacío.
-      </div>
-    </div>
-
-    <div class="form-group">
       <div class="input-container">
         <input 
-          type="text" 
-          formControlName="document" 
-          id="document" 
-          placeholder=" " 
+          type="text"
+          formControlName="document"
+          id="document"
+          placeholder=" "
+          maxlength="11"
           [ngClass]="{'input-error': isInvalid('document')}"
         />
         <label for="document">Número de documento*</label>
       </div>
       <div class="error-message" *ngIf="isInvalid('document')">
-        El campo no puede estar vacío.
+        <ng-container *ngIf="myForm.get('document')?.errors?.['required']">
+          El documento es obligatorio.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('document')?.errors?.['pattern']">
+          Solo se permiten números.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('document')?.errors?.['minlength']">
+          Debe tener al menos 6 dígitos.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('document')?.errors?.['maxlength']">
+          No puede superar los 11 dígitos.
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="input-container">
+        <input 
+          type="text"
+          formControlName="cellular"
+          id="cellular"
+          placeholder=" "
+          maxlength="10"
+          [ngClass]="{'input-error': isInvalid('cellular')}"
+        />
+        <label for="cellular">Celular*</label>
+      </div>
+      <div class="error-message" *ngIf="isInvalid('cellular')">
+        <ng-container *ngIf="myForm.get('cellular')?.errors?.['required']">
+          El celular es obligatorio.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('cellular')?.errors?.['pattern']">
+          Solo se permiten números.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('cellular')?.errors?.['minlength']">
+          Debe tener 10 dígitos.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('cellular')?.errors?.['maxlength']">
+          Debe tener 10 dígitos.
+        </ng-container>
       </div>
     </div>
 
@@ -40,20 +64,81 @@
       <div class="input-container">
         <input 
           type="text" 
-          formControlName="cellular" 
-          id="cellular" 
+          formControlName="lastName" 
+          id="lastName" 
           placeholder=" " 
-          [ngClass]="{'input-error': isInvalid('cellular')}"
+          [ngClass]="{'input-error': isInvalid('lastName')}"
         />
-        <label for="cellular">Celular*</label>
+        <label for="lastName">Primer Apellido*</label>
       </div>
-      <div class="error-message" *ngIf="isInvalid('cellular')">
-        El campo no puede estar vacío.
+      <div class="error-message" *ngIf="isInvalid('lastName')">
+        <ng-container *ngIf="myForm.get('lastName')?.errors?.['required']">
+          El apellido es obligatorio.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('lastName')?.errors?.['pattern']">
+          Solo se permiten letras.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('lastName')?.errors?.['minlength']">
+          Debe tener al menos 2 caracteres.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('lastName')?.errors?.['maxlength']">
+          Máximo 50 caracteres.
+        </ng-container>
+      </div>
+    </div>
+
+
+    <div class="form-group">
+      <div class="input-container">
+        <input type="date" formControlName="documentExpedition" id="documentExpedition" placeholder=" " [ngClass]="{'input-error': isInvalid('documentExpedition')}" />
+        <label for="documentExpedition">Fecha de expedición del documento*</label>
+      </div>
+      <div class="error-message" *ngIf="isInvalid('documentExpedition')">
+        Selecciona una fecha válida.
+      </div>
+    </div>
+
+
+    
+
+    <div class="form-group">
+      <div class="input-container">
+        <input 
+          type="email" 
+          formControlName="email" 
+          id="email" 
+          placeholder=" " 
+          [ngClass]="{'input-error': isInvalid('email')}"
+        />
+        <label for="email">Correo Electrónico*</label>
+      </div>
+      <div class="error-message" *ngIf="isInvalid('email')">
+        <ng-container *ngIf="myForm.get('email')?.errors?.['required']">
+          El correo es obligatorio.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('email')?.errors?.['email']">
+          Ingresa un correo válido.
+        </ng-container>
+        <ng-container *ngIf="myForm.get('email')?.errors?.['maxlength']">
+          Máximo 100 caracteres permitidos.
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="checkbox-container">
+        <input type="checkbox" formControlName="dataPolicy" />
+        <span class="checkmark"></span>
+        Autorizo el tratamiento de mis datos personales de acuerdo con la <a href="#" target="_blank">Política de Privacidad</a>.
+      </label>
+      <div class="error-message" *ngIf="isInvalid('dataPolicy')">
+        Debes aceptar el tratamiento de datos personales.
       </div>
     </div>
 
     <button type="submit" [disabled]="myForm.invalid">
       Continuar
     </button>
+
   </form>
 </div>

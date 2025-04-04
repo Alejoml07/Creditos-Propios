@@ -4,7 +4,7 @@
       <p class="subtitle">Por favor, sube o toma una foto clara de tu rostro.</p>
     </div>
   
-    <form (ngSubmit)="onSubmit()" class="form-container">
+    <form  class="form-container">
       <div class="photo-section">
         <h3 class="section-title">Capturar Foto</h3>
         
@@ -14,8 +14,7 @@
         
           <img *ngIf="photoBase64 && !showVideo" [src]="photoBase64" class="photo-box" alt="Foto tomada"/>
         
-          <div *ngIf="!showVideo && !photoBase64 && !isLoading" class="photo-instruction" (click)="openCamera()">
-            <p>📷 Toca aquí para tomar una foto</p>
+          <div *ngIf="!showVideo && !photoBase64 && !isLoading" class="photo-instruction" >
           </div>
         
           <div *ngIf="isLoading" class="loader"></div>
@@ -24,34 +23,47 @@
             {{ isCorrectPhoto ? '✔' : '✖' }}
           </div>
         
-          <div *ngIf="validationComplete && !isCorrectPhoto" class="retry-option">
+          <div *ngIf="validationComplete && !isCorrectPhoto && isDesktop" class="retry-option">
             <button type="button" class="retry-btn" (click)="retryCapture()">Reintentar</button>
+          </div>
+
+          <div *ngIf="validationComplete && !isCorrectPhoto && !isDesktop" class="retry-option">
+            <button type="button" class="retry-btn" (click)="fileGallery.click()">Reintentar</button>
           </div>
         
           <!-- Botón flotante para capturar la foto -->
           <button *ngIf="showVideo" (click)="capturePhoto()" class="capture-btn"></button>
         </div>
         
-        <!-- Subir Imagen -->
-        <!-- Subir Imagen o Tomar Foto -->
-        <div class="upload-container">
-          <input #photoInput 
+        <div class="photo-actions">
+          <!-- Botón para encender la cámara en PC -->
+          <button *ngIf="isDesktop" class="btn-photo" (click)="openCamera()">
+            📷 Tomar Foto
+          </button>
+          <button *ngIf="isDesktop" class="btn-photo" (click)="fileGallery.click()">
+            📂 Subir Imagen
+          </button>
+
+          <!-- Botón para abrir la galería en móviles -->
+          <button *ngIf="!isDesktop" class="btn-photo" (click)="fileGallery.click()">
+            📂 Subir Imagen
+          </button>
+        
+          <!-- Input oculto para seleccionar una imagen -->
+          <input #fileGallery 
                  type="file" 
                  accept="image/*" 
-                 capture="environment" 
                  multiple 
                  (change)="onPhotoUpload($event)" 
-                 class="hidden-input"/>
-          
-          <a class="upload-link" (click)="photoInput.click()">📷 Seleccionar o Tomar Foto</a>
-        </div>
+                 class="hidden-input" />
+          </div>
         
 
         
         <canvas #imageCanvas class="hidden-canvas"></canvas>
       </div>
   
-      <button class="continue-btn" type="submit" [disabled]="!isCorrectPhoto">
+      <button class="continue-btn" type="button" (click)="onSubmit()">
         Continuar
       </button>
     </form>

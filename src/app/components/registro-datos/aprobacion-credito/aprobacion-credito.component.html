@@ -1,0 +1,21 @@
+<!-- Loader overlay -->
+<div class="loader-overlay" *ngIf="isLoading">
+  <div class="loader"></div>
+</div>
+
+<!-- Contenido principal -->
+<div class="cupo-aprobado-container" *ngIf="!isLoading">
+  <main class="contenido">
+    <h1 class="titulo">Cupo aprobado exitosamente</h1>
+    <p class="mensaje">Ya puedes usar tu cupo aprobado para realizar compras con Leonisa.</p>
+
+    <div class="cupo-box" *ngIf="cupoOtorgado !== null && cupoOtorgado !== undefined">
+      <span class="etiqueta">Cupo disponible</span>
+      <div class="valor">
+        {{ cupoOtorgado === 0 ? '$0 COP' : (cupoOtorgado | currency:'COP':'symbol':'1.0-0':'es-CO') }}
+      </div>
+    </div>
+
+    <button class="boton-cta">Finalizar</button>
+  </main>
+</div>

@@ -148,3 +148,67 @@ button:disabled {
 .form-group select:focus {
   border-color: #666666;
 }
+
+
+.checkbox-group {
+  margin-top: 20px;
+  font-size: 14px;
+
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 25px;
+    cursor: pointer;
+    user-select: none;
+    color: #333;
+
+    input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .checkmark {
+      position: absolute;
+      left: 0;
+      top: 2px;
+      height: 16px;
+      width: 16px;
+      background-color: #eee;
+      border-radius: 3px;
+      border: 1px solid #ccc;
+    }
+
+    input:checked ~ .checkmark {
+      background-color: #007bff;
+      border: 1px solid #007bff;
+    }
+
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    input:checked ~ .checkmark:after {
+      display: block;
+    }
+
+    .checkmark:after {
+      left: 5px;
+      top: 1px;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    a {
+      margin-left: 5px;
+      color: #007bff;
+      text-decoration: underline;
+    }
+  }
+}
