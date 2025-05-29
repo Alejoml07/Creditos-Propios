@@ -1,21 +1,49 @@
-<!-- Loader overlay -->
-<div class="loader-overlay" *ngIf="isLoading">
-  <div class="loader"></div>
-</div>
+ <div class="container">
+    <div class="approval-card">
+      <div class="header-banner"></div>
+      
+      <div class="success-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      
+      <div class="content-area">
+        <h1 class="title">¡Tu cupo de crédito ha sido aprobado!</h1>
+        <p class="subtitle">Ya puedes comenzar a disfrutar de Tu Crédito Leonisa. Compra hoy y paga después.</p>
+        <p class="subtitle">¡Asi es el nuevo poder Leonisa!.</p>
 
-<!-- Contenido principal -->
-<div class="cupo-aprobado-container" *ngIf="!isLoading">
-  <main class="contenido">
-    <h1 class="titulo">Cupo aprobado exitosamente</h1>
-    <p class="mensaje">Ya puedes usar tu cupo aprobado para realizar compras con Leonisa.</p>
-
-    <div class="cupo-box" *ngIf="cupoOtorgado !== null && cupoOtorgado !== undefined">
-      <span class="etiqueta">Cupo disponible</span>
-      <div class="valor">
-        {{ cupoOtorgado === 0 ? '$0 COP' : (cupoOtorgado | currency:'COP':'symbol':'1.0-0':'es-CO') }}
+        <div class="cupo-box">
+          <span class="etiqueta">Tu cupo de crédito disponible</span>
+          <div class="valor">
+            {{ cupoOtorgado === 0 ? '$0 COP' : (cupoOtorgado | currency:'COP':'symbol':'1.0-0':'es-CO') }}
+          </div>
+        </div>
+        
+        <div class="benefits-section">
+          <div class="benefit-item">
+            <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span class="benefit-text">Ahora puedes comprar con tu propio cupo de crédito y pagar hasta en 6 coutas</span>
+          </div>
+          
+          <!-- <div class="benefit-item">
+            <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span class="benefit-text">Sin papeleos adicionales, tu crédito está listo para usar</span>
+          </div>
+           -->
+          <!-- <div class="benefit-item">
+            <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span class="benefit-text">Acceso a promociones exclusivas para clientes con crédito aprobado</span>
+          </div> -->
+        </div>        
+        <!-- <p class="help-text">Si tienes dudas sobre tu cupo, contacta a nuestro servicio al cliente</p> -->
       </div>
     </div>
-
-    <button class="boton-cta">Finalizar</button>
-  </main>
-</div>
+  </div>

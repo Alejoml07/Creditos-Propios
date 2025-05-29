@@ -4,9 +4,10 @@ import { GoogleVisionService } from 'src/app/shared/service/google-vision.servic
 import { OpenIaService } from 'src/app/shared/service/open-ia.service';
 import Swal from 'sweetalert2';
 @Component({
-  selector: 'app-documento-trasera-validacion',
-  templateUrl: './documento-trasera-validacion.component.html',
-  styleUrls: ['./documento-trasera-validacion.component.scss']
+    selector: 'app-documento-trasera-validacion',
+    templateUrl: './documento-trasera-validacion.component.html',
+    styleUrls: ['./documento-trasera-validacion.component.scss'],
+    standalone: false
 })
 export class DocumentoTraseraValidacionComponent {
 

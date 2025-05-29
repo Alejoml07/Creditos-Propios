@@ -1,40 +1,77 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { LoaderService } from 'src/app/shared/service/loader/loader.service';
+import { LogService } from 'src/app/shared/service/logs/logs.service';
+import { UserSessionService } from 'src/app/shared/service/user-session.service';
 import { UsuariosService } from 'src/app/shared/service/usuarios.service';
 
 @Component({
   selector: 'app-aprobacion-credito',
   templateUrl: './aprobacion-credito.component.html',
-  styleUrls: ['./aprobacion-credito.component.scss']
+  styleUrls: ['./aprobacion-credito.component.scss'],
+  standalone: false
 })
 export class AprobacionCreditoComponent implements OnInit {
   cupoOtorgado: number | null = null;
   mostrarCupo: boolean = false;
   isLoading: boolean = true;
 
+  loaderService: LoaderService = inject(LoaderService);
+  private logService: LogService = inject(LogService);
+    private userSessionService: UserSessionService = inject(UserSessionService);
+  
 
-  constructor(private usuariosService: UsuariosService) {}
+  constructor(private usuariosService: UsuariosService, private router: Router) {}
 
   ngOnInit(): void {
-    const datosBasicos = localStorage.getItem('datosBasicos');
-    const parsedData = datosBasicos ? JSON.parse(datosBasicos) : null;
-    const cedula = parsedData?.document;
+    this.loaderService.show();
 
-    if (cedula) {
-      const payload = { Cedula: cedula };
+    const datosBasicos = this.userSessionService.getDatosBasicos();
+
+    console.log('datosBasicos:', datosBasicos);
+
+    if (datosBasicos) {
+      const payload = { 
+        IdCliente: datosBasicos.document,
+        // FechaExpedicion: datosBasicos.documentExpedition,
+        tipoIdentificacion: datosBasicos.documentType,  
+        // primerApellido: datosBasicos.lastName,
+      };
 
       this.usuariosService.consultarCedula(payload).subscribe({
-        next: (response) => {
+        next: async (response) => {
           console.log('Respuesta del servicio:', response);
-      
-          if (response?.result?.cupoOtorgado !== undefined) {
-            this.cupoOtorgado = response.result.cupoOtorgado;
+
+          await this.logService.addLog({
+            Id: '',
+            IdUsuario: datosBasicos.document,
+            FechaTransaccion: new Date().toISOString(),
+            NombreOperacion: 'Consulta cupo aprobado',
+            Payload: JSON.stringify(payload),
+            ServiceResponse: JSON.stringify(response)
+          });
+
+          if (response?.result?.cupoAsignado !== undefined) {
+            console.log('Cupo asignado:', response.result.cupoAsignado);
+            this.cupoOtorgado = response.result.cupoAsignado;
           }
-      
-          this.isLoading = false; // ✅ Se oculta el loader y se muestra el contenido
+
+          this.loaderService.hide();   
         },
-        error: (error) => {
+        error: async (error) => {
           console.error('Error al consultar el cupo aprobado:', error);
-          this.isLoading = false;
+
+          await this.logService.addLog({
+            Id: '',
+            IdUsuario: datosBasicos.document,
+            FechaTransaccion: new Date().toISOString(),
+            NombreOperacion: 'Consulta cupo aprobado - Error',
+            Payload: JSON.stringify(payload),
+            ServiceResponse: JSON.stringify({ error: error?.message || 'Error desconocido' })
+          });
+
+          this.router.navigate(['/registro/credit-denied']);
+          this.loaderService.hide();   
         }
       });
     } else {

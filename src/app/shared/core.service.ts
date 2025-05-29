@@ -22,10 +22,10 @@ export abstract class CoreService {
     return this.http.get<T>(urlComplete);
   }
 
-  protected post<T>(url: string, body: any, options?: HttpParams): Observable<T> {
-    const urlComplete = this.urlBase + url
-    return this.http.post<T>(urlComplete, body);
-  }
+  protected post<T>(url: string, body: any, options?: { headers?: HttpHeaders; params?: HttpParams }): Observable<T> {
+  const urlComplete = this.urlBase + url;
+  return this.http.post<T>(urlComplete, body, options);
+}
 
   protected put<T>(url: string, body: any, options?: HttpParams): Observable<T> {
     const urlComplete = this.urlBase + url

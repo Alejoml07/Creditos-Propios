@@ -1,12 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LoaderService } from 'src/app/shared/service/loader/loader.service';
 import { UsuariosService } from 'src/app/shared/service/usuarios.service';
+import { LogService } from 'src/app/shared/service/logs/logs.service';
+import { IdentityValidationsService } from 'src/app/shared/service/Identity-validations/identity-validations.service';
+import { SecurityService } from 'src/app/shared/service/security.service';
+import { FlowService } from 'src/app/shared/service/flow/flow.service';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-codigo-otp',
   templateUrl: './codigo-otp.component.html',
-  styleUrls: ['./codigo-otp.component.scss']
+  styleUrls: ['./codigo-otp.component.scss'],
+  standalone: false
 })
 export class CodigoOtpComponent {
 
@@ -17,78 +24,117 @@ export class CodigoOtpComponent {
   countdown: number = 30;
   interval: any;
 
+  loaderService: LoaderService = inject(LoaderService);
 
-  // private usuariosService: UsuariosService = inject(UsuariosService);
+  logService: LogService = inject(LogService);
 
-  constructor(private fb: FormBuilder, private router: Router, private usuariosService: UsuariosService) {
-    this.otpForm = this.fb.group({
+  private identityService: IdentityValidationsService = inject(IdentityValidationsService);
+    securityService: SecurityService = inject(SecurityService);
+      flowService: FlowService = inject(FlowService);
+    
+  
+
+
+  constructor(
+
+    private formBuilder: FormBuilder,
+
+
+  ) {
+
+    this.otpForm = this.formBuilder.group({
+
       otp: ['', [Validators.required, Validators.pattern(/^[0-9]{4,6}$/)]]
+
     });
+
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+    console.log('Iniciando el componente de OTP');
+
+    this.securityService.getFlujoById(1)
+    
+        .pipe(map(response => response.result))
+    
+        .subscribe(result => {
+    
+          console.log('Flujo obtenido:', result);
+    
+          this.flowService.setBackendFlow(result);
+    
+      });
+
+    this.flowService.markStepCompleted('codigo-otp');
+
+      history.pushState(null, '', location.href);
+      window.onpopstate = () => {
+        history.go(1); // Evita retroceso
+      };
+        
+
+    this.selectMethod('whatsapp');
+
+  }
 
   selectMethod(method: 'sms' | 'email' | 'whatsapp'): void {
+
     if (!this.selectedMethod) {
+
       this.selectedMethod = method;
+
       this.startCountdown();
+
+      this.identityService.enviarCodigoOtp(method);
     }
+
   }
 
   startCountdown(): void {
+
     this.interval = setInterval(() => {
+
       if (this.countdown > 0) {
+
         this.countdown--;
+
       } else {
+
         clearInterval(this.interval);
+
         this.selectedMethod = null;
+
       }
     }, 1000);
   }
 
-  validateOtp(): void {
+  async validateOtp(): Promise<void> {
+
     console.log('Validando código OTP...');
-    if (this.otpForm.valid) {
-      console.log('Código OTP válido');
-      this.isLoading = true;
 
-      // Obtener la cédula desde localStorage
-      const datosBasicos = localStorage.getItem('datosBasicos');
-      const parsedData = datosBasicos ? JSON.parse(datosBasicos) : null;
-      const cedula = parsedData?.document;
+    if (!this.otpForm.valid) {
 
-      if (cedula) {
-        const payload = { Cedula: cedula };
-
-        //  // Cambiar 
-        // this.usuariosService.consultarCedula(payload).subscribe({
-        //   next: (response) => {
-        //     console.log('Respuesta del servicio:', response);
-        //     this.router.navigate(['/registro/aprobacion-credito']);
-        //     this.isLoading = false;
-        //   },
-        //   error: (error) => {
-        //     console.error('Error al validar la cédula:', error);
-        //     this.isLoading = false;
-        //   }
-        // });
-        
-      } else {
-        console.error('No se encontró la cédula en localStorage');
-        this.isLoading = false;
-      }
-
-    } else {
       this.isOtpValid = false;
+
+      return;
+    }
+
+    this.loaderService.show();
+
+    const otp = this.otpForm.get('otp')?.value;
+
+    const isValid = await this.identityService.validarCodigoOtp(otp);
+
+    this.isOtpValid = isValid;
+
+    this.loaderService.hide();
+
+    if (!isValid) {
+
+      console.warn('OTP inválido');
+
     }
   }
 
-
-  resendOtp(): void {
-    console.log('Reenviando código OTP...');
-    this.isLoading = true;
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 1500);
-  }
 }

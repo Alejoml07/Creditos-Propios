@@ -7,9 +7,10 @@ import * as XLSX from 'xlsx';
 
 
 @Component({
-  selector: 'app-gestor-pagina',
-  templateUrl: './gestor-pagina.component.html',
-  styleUrls: ['./gestor-pagina.component.scss']
+    selector: 'app-gestor-pagina',
+    templateUrl: './gestor-pagina.component.html',
+    styleUrls: ['./gestor-pagina.component.scss'],
+    standalone: false
 })
 export class GestorPaginaComponent {
   // reporteForm: FormGroup;

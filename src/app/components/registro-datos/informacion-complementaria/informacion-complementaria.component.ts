@@ -5,9 +5,10 @@ import Swal from 'sweetalert2';
 
 
 @Component({
-  selector: 'app-informacion-complementaria',
-  templateUrl: './informacion-complementaria.component.html',
-  styleUrls: ['./informacion-complementaria.component.scss']
+    selector: 'app-informacion-complementaria',
+    templateUrl: './informacion-complementaria.component.html',
+    styleUrls: ['./informacion-complementaria.component.scss'],
+    standalone: false
 })
 export class InformacionComplementariaComponent implements OnInit {
   myForm!: FormGroup;

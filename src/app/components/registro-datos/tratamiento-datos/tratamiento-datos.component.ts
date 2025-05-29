@@ -4,9 +4,10 @@ import { GoogleVisionService } from 'src/app/shared/service/google-vision.servic
 import { OpenIaService } from 'src/app/shared/service/open-ia.service';
 
 @Component({
-  selector: 'app-tratamiento-datos',
-  templateUrl: './tratamiento-datos.component.html',
-  styleUrls: ['./tratamiento-datos.component.scss']
+    selector: 'app-tratamiento-datos',
+    templateUrl: './tratamiento-datos.component.html',
+    styleUrls: ['./tratamiento-datos.component.scss'],
+    standalone: false
 })
 export class TratamientoDatosComponent {
  infoForm: FormGroup;

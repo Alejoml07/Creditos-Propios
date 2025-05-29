@@ -1,3 +1,47 @@
+/* Estilos globales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  padding: 30px 20px;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  background-color: transparent;
+}
+
+.container h1.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 13px;
+  line-height: 1.5;
+}
+
+/* Formulario */
+.approbe-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 /* Contenedor de input */
 .input-container {
   position: relative;
@@ -7,8 +51,8 @@
 /* Inputs */
 .input-container input {
   width: 100%;
-  padding: 18px 20px;
-  font-size: 1.1rem;
+  padding: 17px 20px;
+  font-size: 1.05rem;
   border: 1px solid #cccccc;
   border-radius: 8px;
   color: #333333;
@@ -17,7 +61,7 @@
   transition: border-color 0.2s ease-in-out;
 }
 
-/* Ocultar el placeholder nativo */
+/* Placeholder oculto */
 .input-container input::placeholder {
   color: transparent;
 }
@@ -32,112 +76,23 @@
   color: #aaaaaa;
   transition: all 0.3s ease;
   pointer-events: none;
+  background-color: white;
+  padding: 0 4px;
 }
 
-/* Cuando el input está enfocado o tiene texto */
 .input-container input:focus ~ label,
 .input-container input:not(:placeholder-shown) ~ label {
   top: 5px;
   left: 15px;
-  font-size: 0.750rem;
-  color: #666666;
-  background: white;
-  padding: 0 5px;
+  font-size: 0.75rem;
+  color: #3a7bd5;
 }
 
-/* Resto de estilos (manteniendo tu diseño original) */
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  padding: 3rem;
-  background-color: #ffffff;
-}
-
-.container h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1.2;
-  margin-bottom: 1rem;
-  color: #333333;
-}
-
-.container p {
-  font-size: 1.125rem;
-  text-align: center;
-  color: #555555;
-  margin-bottom: 2rem;
-}
-
-.approbe-form {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.error-message {
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: #ff0000;
-}
-
-/* Aplica borde rojo cuando el input tiene error */
-.input-error {
-  border: 2px solid #ff0000 !important;
-}
-
-/* Modifica el label cuando el input tiene error */
-.input-container input.input-error ~ label {
-  color: #ff0000;
-}
-
-/* Modifica el select cuando tiene error */
-.form-group select.input-error {
-  border: 2px solid #ff0000 !important;
-  color: #ff0000;
-}
-
-/* Ajustar color del mensaje de error */
-.error-message {
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: #ff0000;
-}
-
-button {
-  align-self: center;
-  padding: 16px 74px;
-  font-size: 1.125rem;
-  border: none;
-  border-radius: 40px;
-  background-color: #616161;
-  color: #ffffff;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-button:hover {
-  background-color: #757575;
-}
-
-button:disabled {
-  background-color: #bdbdbd;
-  cursor: not-allowed;
-}
-
+/* Select */
 .form-group select {
   width: 100%;
-  padding: 18px 20px;
-  font-size: 1.125rem;
+  padding: 16px 20px;
+  font-size: 1.05rem;
   border: 1px solid #cccccc;
   border-radius: 8px;
   color: #333333;
@@ -146,69 +101,172 @@ button:disabled {
 }
 
 .form-group select:focus {
-  border-color: #666666;
+  border-color: #3a7bd5;
 }
 
+/* Errores */
+.input-error {
+  border: 2px solid #e74c3c !important;
+}
 
-.checkbox-group {
-  margin-top: 20px;
+.input-container input.input-error ~ label {
+  color: #e74c3c;
+}
+
+.form-group select.input-error {
+  border: 2px solid #e74c3c !important;
+  color: #e74c3c;
+}
+
+.error-message {
+  font-size: 0.85rem;
+  color: #e74c3c;
+  margin-top: 6px;
+}
+
+.warning-message {
+  font-size: 0.85rem;
+  color: #e67e22;
+}
+
+/* Botón de continuar */
+.continue-btn,
+button[type="submit"] {
+  width: 100%;
+  padding: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(58, 123, 213, 0.3);
+  margin-top: 10px;
+}
+
+.continue-btn:hover,
+button[type="submit"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(58, 123, 213, 0.4);
+}
+
+.continue-btn:disabled,
+button[type="submit"]:disabled {
+  background: linear-gradient(90deg, #c5c5c5, #e0e0e0);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Documento + Select */
+.custom-doc-input {
+  display: flex;
+  width: 100%;
+}
+
+.custom-doc-input .tipo-documento-select {
+  width: 100px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+  font-size: 1rem;
+  padding: 14px 10px;
+}
+
+.custom-doc-input .input-container {
+  flex: 1;
+  position: relative;
+}
+
+.custom-doc-input input {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding-left: 20px;
+  padding-right: 36px;
+}
+
+.custom-doc-input label {
+  left: 20px;
+}
+
+.mini-loader {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-top: 2px solid #3a7bd5;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  transform: translateY(-50%);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.input-container.with-loader {
+  position: relative;
+}
+
+/* Checkbox y documentos */
+.form-group.d-flex {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 10px;
+}
+
+.form-check-input {
+  margin-top: 6px;
+  cursor: pointer;
+}
+
+.lista-documentos {
+  list-style-type: disc;
+  padding-left: 1rem;
+  margin: 0;
+  text-align: left;
+}
+
+.lista-documentos li {
   font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
 
-  .checkbox-container {
-    display: flex;
-    align-items: center;
-    position: relative;
-    padding-left: 25px;
-    cursor: pointer;
-    user-select: none;
-    color: #333;
+.lista-documentos a {
+  color: #3a7bd5;
+  text-decoration: underline;
+}
 
-    input {
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-    }
+/* Responsive */
+@media (max-width: 480px) {
+  .container {
+    padding: 20px;
+  }
 
-    .checkmark {
-      position: absolute;
-      left: 0;
-      top: 2px;
-      height: 16px;
-      width: 16px;
-      background-color: #eee;
-      border-radius: 3px;
-      border: 1px solid #ccc;
-    }
+  .title {
+    font-size: 24px;
+  }
 
-    input:checked ~ .checkmark {
-      background-color: #007bff;
-      border: 1px solid #007bff;
-    }
+  .subtitle {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
 
-    .checkmark:after {
-      content: "";
-      position: absolute;
-      display: none;
-    }
+  .input-container input,
+  .form-group select {
+    font-size: 1.4rem;
+    padding: 14px 16px;
+  }
 
-    input:checked ~ .checkmark:after {
-      display: block;
-    }
-
-    .checkmark:after {
-      left: 5px;
-      top: 1px;
-      width: 4px;
-      height: 8px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
-    }
-
-    a {
-      margin-left: 5px;
-      color: #007bff;
-      text-decoration: underline;
-    }
+  .continue-btn {
+    padding: 14px;
+    font-size: 16px;
   }
 }

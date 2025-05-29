@@ -4,7 +4,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { StorageService } from './storage.service';
 import Swal from 'sweetalert2';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { LogPayload } from './logs/interfaces/ilog-application.interface';
 
 
 
@@ -102,5 +103,31 @@ procesarCompraDLM(data: any, authToken: string) {
     { headers }
   );
 }
+
+
+
+saveLogs(payload: LogPayload): Observable<any> {
+  const encryptedIp = localStorage.getItem('ip') ?? '';
+
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Ip': encryptedIp
+  });
+
+  return this.post<any>('/AddLog', payload, { headers });
+}
+
+getIp(): Observable<{ ip: string }> {
+
+  return this.http.get<{ ip: string }>('https://api.ipify.org?format=json');
+  
+}
+
+getFlujoById(flujoId: number): Observable<{ isSuccess: boolean; message: string; result: { key: string; path: string }[] }> {
+  return this.get<{ isSuccess: boolean; message: string; result: { key: string; path: string }[] }>(
+    `/GetPasosByFlujoId/${flujoId}`
+  );
+}
+
 
 }

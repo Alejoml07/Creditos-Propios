@@ -6,6 +6,8 @@ export const environment = {
   // urlPuntosLeonisa: 'https://omnicanalidad.leonisa360.com'
 
   urlCreditosPropios: 'https://azcreditospropios-dev.azurewebsites.net/api/CreditosPropios'
+  // urlCreditosPropios: 'https://creditospropios-dev.leonisa360.com/rest/v1/api/CreditosPropios'
+
   
 
 };

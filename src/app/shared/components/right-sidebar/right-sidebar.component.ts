@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-right-sidebar',
-  templateUrl: './right-sidebar.component.html',
-  styleUrls: ['./right-sidebar.component.scss']
+    selector: 'app-right-sidebar',
+    templateUrl: './right-sidebar.component.html',
+    styleUrls: ['./right-sidebar.component.scss'],
+    standalone: false
 })
 export class RightSidebarComponent implements OnInit {
 

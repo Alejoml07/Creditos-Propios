@@ -1,37 +1,43 @@
 <div class="container">
-  <h1>¡Haz tu compra ahora con Leonisa! <br> ¡Paga después!</h1>
-  <p>Ingresa tus datos para obtener tu cupo con Leonisa</p>
+  <div class="text-center">
+    <h1 class="title">¡Solicita aquí Tu Crédito Leonisa!</h1>
+    <p class="subtitle">Crédito fácil, antojos satisfechos.</p>
+    <p class="subtitle">¡Así es el nuevo poder Leonisa!</p>
 
-  <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="approbe-form">
+  </div>
 
-    <div class="form-group">
-      <div class="input-container">
+  <form [formGroup]="FormDataBasicUser" (ngSubmit)="onSubmit()" class="approbe-form">
+    <!-- Documento -->
+    <div class="form-group custom-doc-input">
+      <select 
+        class="form-select tipo-documento-select"
+        formControlName="documentType"
+        aria-label="Tipo de documento">
+        <option value="1">CC</option>
+        <option value="2">CE</option>
+      </select>
+
+      <div class="input-container with-loader">
         <input 
           type="text"
           formControlName="document"
           id="document"
           placeholder=" "
           maxlength="11"
-          [ngClass]="{'input-error': isInvalid('document')}"
-        />
+          [ngClass]="{'input-error': isInvalid('document')}" />
         <label for="document">Número de documento*</label>
-      </div>
-      <div class="error-message" *ngIf="isInvalid('document')">
-        <ng-container *ngIf="myForm.get('document')?.errors?.['required']">
-          El documento es obligatorio.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('document')?.errors?.['pattern']">
-          Solo se permiten números.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('document')?.errors?.['minlength']">
-          Debe tener al menos 6 dígitos.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('document')?.errors?.['maxlength']">
-          No puede superar los 11 dígitos.
-        </ng-container>
+        <div class="mini-loader" *ngIf="isValidatingDocument"></div>
       </div>
     </div>
+    <div class="error-message" *ngIf="isInvalid('document')">
+      <ng-container *ngIf="FormDataBasicUser.get('document')?.errors?.['required']">El documento es obligatorio.</ng-container>
+      <ng-container *ngIf="FormDataBasicUser.get('document')?.errors?.['pattern']">Solo se permiten números.</ng-container>
+      <ng-container *ngIf="FormDataBasicUser.get('document')?.errors?.['minlength']">Debe tener al menos 6 dígitos.</ng-container>
+      <ng-container *ngIf="FormDataBasicUser.get('document')?.errors?.['maxlength']">No puede superar los 11 dígitos.</ng-container>
+    </div>
+    <div class="warning-message" *ngIf="documentWarning">⚠️ {{ documentWarning }}</div>
 
+    <!-- Celular -->
     <div class="form-group">
       <div class="input-container">
         <input 
@@ -40,26 +46,22 @@
           id="cellular"
           placeholder=" "
           maxlength="10"
-          [ngClass]="{'input-error': isInvalid('cellular')}"
-        />
+          [ngClass]="{'input-error': isInvalid('cellular')}" />
         <label for="cellular">Celular*</label>
+        <div class="mini-loader" *ngIf="isValidatingCelular"></div>
+
       </div>
       <div class="error-message" *ngIf="isInvalid('cellular')">
-        <ng-container *ngIf="myForm.get('cellular')?.errors?.['required']">
-          El celular es obligatorio.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('cellular')?.errors?.['pattern']">
-          Solo se permiten números.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('cellular')?.errors?.['minlength']">
-          Debe tener 10 dígitos.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('cellular')?.errors?.['maxlength']">
-          Debe tener 10 dígitos.
-        </ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('cellular')?.errors?.['required']">El celular es obligatorio.</ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('cellular')?.errors?.['pattern']">Solo se permiten números.</ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('cellular')?.errors?.['minlength']">Debe tener 10 dígitos.</ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('cellular')?.errors?.['maxlength']">Debe tener 10 dígitos.</ng-container>
       </div>
+      <div class="warning-message" *ngIf="celularWarning">⚠️ {{ celularWarning }}</div>
+
     </div>
 
+    <!-- Apellido -->
     <div class="form-group">
       <div class="input-container">
         <input 
@@ -67,30 +69,26 @@
           formControlName="lastName" 
           id="lastName" 
           placeholder=" " 
-          [ngClass]="{'input-error': isInvalid('lastName')}"
-        />
+          [ngClass]="{'input-error': isInvalid('lastName')}" />
         <label for="lastName">Primer Apellido*</label>
       </div>
       <div class="error-message" *ngIf="isInvalid('lastName')">
-        <ng-container *ngIf="myForm.get('lastName')?.errors?.['required']">
-          El apellido es obligatorio.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('lastName')?.errors?.['pattern']">
-          Solo se permiten letras.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('lastName')?.errors?.['minlength']">
-          Debe tener al menos 2 caracteres.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('lastName')?.errors?.['maxlength']">
-          Máximo 50 caracteres.
-        </ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('lastName')?.errors?.['required']">El apellido es obligatorio.</ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('lastName')?.errors?.['pattern']">Solo se permiten letras.</ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('lastName')?.errors?.['minlength']">Debe tener al menos 2 caracteres.</ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('lastName')?.errors?.['maxlength']">Máximo 50 caracteres.</ng-container>
       </div>
     </div>
 
-
+    <!-- Fecha de expedición -->
     <div class="form-group">
       <div class="input-container">
-        <input type="date" formControlName="documentExpedition" id="documentExpedition" placeholder=" " [ngClass]="{'input-error': isInvalid('documentExpedition')}" />
+        <input 
+          type="date" 
+          formControlName="documentExpedition" 
+          id="documentExpedition" 
+          placeholder=" " 
+          [ngClass]="{'input-error': isInvalid('documentExpedition')}" />
         <label for="documentExpedition">Fecha de expedición del documento*</label>
       </div>
       <div class="error-message" *ngIf="isInvalid('documentExpedition')">
@@ -98,9 +96,7 @@
       </div>
     </div>
 
-
-    
-
+    <!-- Email -->
     <div class="form-group">
       <div class="input-container">
         <input 
@@ -108,37 +104,39 @@
           formControlName="email" 
           id="email" 
           placeholder=" " 
-          [ngClass]="{'input-error': isInvalid('email')}"
-        />
+          [ngClass]="{'input-error': isInvalid('email')}" />
         <label for="email">Correo Electrónico*</label>
       </div>
       <div class="error-message" *ngIf="isInvalid('email')">
-        <ng-container *ngIf="myForm.get('email')?.errors?.['required']">
-          El correo es obligatorio.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('email')?.errors?.['email']">
-          Ingresa un correo válido.
-        </ng-container>
-        <ng-container *ngIf="myForm.get('email')?.errors?.['maxlength']">
-          Máximo 100 caracteres permitidos.
-        </ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('email')?.errors?.['required']">El correo es obligatorio.</ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('email')?.errors?.['email']">Ingresa un correo válido.</ng-container>
+        <ng-container *ngIf="FormDataBasicUser.get('email')?.errors?.['maxlength']">Máximo 100 caracteres permitidos.</ng-container>
       </div>
     </div>
 
-    <div class="form-group checkbox-group">
-      <label class="checkbox-container">
-        <input type="checkbox" formControlName="dataPolicy" />
-        <span class="checkmark"></span>
-        Autorizo el tratamiento de mis datos personales de acuerdo con la <a href="#" target="_blank">Política de Privacidad</a>.
-      </label>
-      <div class="error-message" *ngIf="isInvalid('dataPolicy')">
-        Debes aceptar el tratamiento de datos personales.
-      </div>
+    <!-- Aceptación de políticas -->
+ <div class="form-group d-flex align-items-start gap-2">
+  <input 
+    class="form-check-input mt-1" 
+    type="checkbox" 
+    id="checkLegalDocs"
+    formControlName="dataPolicy" />
+
+  <div class="documentos-legales">
+    <ul class="lista-documentos mb-0">
+      <li *ngFor="let doc of documentosLegales">
+        <a [href]="doc.urlDocumento" target="_blank">{{ doc.descripcionDocumento }}</a>
+      </li>
+    </ul>
+  </div>
+</div>
+    <div *ngIf="isInvalid('dataPolicy')" class="text-danger small mt-1">
+      Debes aceptar los términos y condiciones
     </div>
 
-    <button type="submit" [disabled]="myForm.invalid">
+    <!-- Botón -->
+    <button class="continue-btn" type="submit" [disabled]="FormDataBasicUser.invalid || documentWarningButton || celularWarningButton">
       Continuar
     </button>
-
   </form>
 </div>

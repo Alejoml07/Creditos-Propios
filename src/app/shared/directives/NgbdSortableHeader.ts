@@ -19,6 +19,7 @@ export interface SortEvent {
         '[class.asc]': 'direction === "asc"',
         '[class.desc]': 'direction === "desc"',
     },
+    standalone: false
 })
 
 

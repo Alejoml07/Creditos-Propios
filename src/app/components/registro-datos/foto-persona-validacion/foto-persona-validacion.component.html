@@ -1,71 +1,83 @@
 <div class="container">
-    <div class="text-center">
-      <h1 class="title">Captura tu Foto de Rostro</h1>
-      <p class="subtitle">Por favor, sube o toma una foto clara de tu rostro.</p>
-    </div>
-  
-    <form  class="form-container">
-      <div class="photo-section">
-        <h3 class="section-title">Capturar Foto</h3>
-        
-        <!-- Marco de la foto -->
-        <div class="photo-placeholder">
-          <video #videoElement *ngIf="showVideo" autoplay class="photo-box-video"></video>
-        
-          <img *ngIf="photoBase64 && !showVideo" [src]="photoBase64" class="photo-box" alt="Foto tomada"/>
-        
-          <div *ngIf="!showVideo && !photoBase64 && !isLoading" class="photo-instruction" >
-          </div>
-        
-          <div *ngIf="isLoading" class="loader"></div>
-        
-          <div *ngIf="validationComplete" [ngClass]="{'success-check': isCorrectPhoto, 'error-x': !isCorrectPhoto}">
-            {{ isCorrectPhoto ? '✔' : '✖' }}
-          </div>
-        
-          <div *ngIf="validationComplete && !isCorrectPhoto && isDesktop" class="retry-option">
-            <button type="button" class="retry-btn" (click)="retryCapture()">Reintentar</button>
-          </div>
-
-          <div *ngIf="validationComplete && !isCorrectPhoto && !isDesktop" class="retry-option">
-            <button type="button" class="retry-btn" (click)="fileGallery.click()">Reintentar</button>
-          </div>
-        
-          <!-- Botón flotante para capturar la foto -->
-          <button *ngIf="showVideo" (click)="capturePhoto()" class="capture-btn"></button>
-        </div>
-        
-        <div class="photo-actions">
-          <!-- Botón para encender la cámara en PC -->
-          <button *ngIf="isDesktop" class="btn-photo" (click)="openCamera()">
-            📷 Tomar Foto
-          </button>
-          <button *ngIf="isDesktop" class="btn-photo" (click)="fileGallery.click()">
-            📂 Subir Imagen
-          </button>
-
-          <!-- Botón para abrir la galería en móviles -->
-          <button *ngIf="!isDesktop" class="btn-photo" (click)="fileGallery.click()">
-            📂 Subir Imagen
-          </button>
-        
-          <!-- Input oculto para seleccionar una imagen -->
-          <input #fileGallery 
-                 type="file" 
-                 accept="image/*" 
-                 multiple 
-                 (change)="onPhotoUpload($event)" 
-                 class="hidden-input" />
-          </div>
-        
-
-        
-        <canvas #imageCanvas class="hidden-canvas"></canvas>
-      </div>
-  
-      <button class="continue-btn" type="button" (click)="onSubmit()">
-        Continuar
-      </button>
-    </form>
+  <div class="text-center">
+    <h1 class="title">Verificación facial</h1>
+    <p class="subtitle">Para continuar con el proceso, necesitamos verificar tu identidad mediante una foto de tu rostro.</p>
   </div>
-  
+
+  <form class="form-container">
+    <div class="photo-container">
+      <h3 class="section-title">
+         Captura tu rostro
+      </h3>
+
+      <div class="photo-placeholder">
+        <video #videoElement *ngIf="showVideo" autoplay class="photo-box-video"></video>
+        <img *ngIf="photoBase64 && !showVideo" [src]="photoBase64" class="photo-box" alt="Foto tomada" />
+
+        <div *ngIf="!showVideo && !photoBase64 && !isLoading" class="photo-instruction">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-bounding-box" viewBox="0 0 16 16">
+  <path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5M.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5"/>
+  <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+</svg>
+          <span>Tu foto aparecerá aquí</span>
+        </div>
+
+        <div *ngIf="isLoading" class="loader"></div>
+
+        <div *ngIf="validationComplete" [ngClass]="{'success-check': isCorrectPhoto, 'error-x': !isCorrectPhoto}">
+          {{ isCorrectPhoto ? '✓' : '✗' }}
+        </div>
+
+        <div *ngIf="validationComplete && !isCorrectPhoto " class="retry-option">
+          <button type="button" class="retry-btn" (click)="retryCapture()">
+            <i class="fa fa-rotate-right"></i> Reintentar
+          </button>
+        </div>
+<!-- 
+        <div *ngIf="validationComplete && !isCorrectPhoto && !isDesktop" class="retry-option">
+          <button type="button" class="retry-btn" (click)="fileGallery.click()">
+            <i class="fa fa-rotate-right"></i> Reintentar
+          </button>
+        </div> -->
+
+        <button *ngIf="showVideo" (click)="capturePhoto()" class="capture-btn" aria-label="Tomar foto"></button>
+
+        <!-- <button *ngIf="showVideo" type="button" class="toggle-camera-btn" (click)="toggleCamera()">
+          <i class="fa fa-repeat"></i>
+        </button> -->
+      </div>
+
+      <div class="capture-tips">
+        <h4><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightbulb" viewBox="0 0 16 16">
+  <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a2 2 0 0 0-.453-.618A5.98 5.98 0 0 1 2 6m6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1"/>
+  </svg> Consejos para una buena foto</h4>
+        <ul>
+          <li>Asegúrate de tener buena iluminación</li>
+          <li>Mira directamente a la cámara</li>
+          <li>Mantén una expresión neutra</li>
+          <li>No uses lentes de sol ni sombreros</li>
+        </ul>
+      </div>
+
+      <div class="photo-actions">
+        <button  type="button" class="btn-photo btn-camera" (click)="openCamera()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera" viewBox="0 0 16 16">
+  <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z"/>
+  <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
+</svg> Tomar Foto
+        </button>
+
+        <!-- <button *ngIf="true" type="button" class="btn-photo btn-upload" (click)="fileGallery.click()">
+          <i class="fa fa-upload"></i> Subir Imagen
+        </button> -->
+      </div>
+
+      <input #fileGallery type="file" accept="image/*" multiple (change)="onPhotoUpload($event)" class="hidden-input" />
+      <canvas #imageCanvas class="hidden-canvas"></canvas>
+    </div>
+
+    <button class="continue-btn" type="button" [disabled]="!photoBase64 || !isCorrectPhoto" (click)="onSubmit()">
+      Continuar 
+    </button>
+  </form>
+</div>

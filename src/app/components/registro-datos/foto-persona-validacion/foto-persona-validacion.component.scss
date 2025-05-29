@@ -1,381 +1,544 @@
-.container {
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-    text-align: center;
-}
+ /* Estilos generales */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+    }
 
-.title {
-    font-size: 28px;
-    font-weight: bold;
-    color: #333;
-}
+      .container {
+      width: 100%;
+      max-width: 600px;
+      padding: 30px 20px;
+      margin: auto;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
+    }
 
-.subtitle {
-    font-size: 16px;
-    color: #777;
-    margin-bottom: 20px;
-}
+    /* Progreso en la parte superior */
+    .progress-container {
+      margin-bottom: 20px;
+      position: relative;
+    }
 
-.photo-section {
-    margin-bottom: 20px;
-}
+    .progress-bar {
+      height: 6px;
+      width: 100%;
+      background-color: #f1f1f1;
+      border-radius: 10px;
+      overflow: hidden;
+    }
 
-.section-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #555;
-}
+    .progress-fill {
+      height: 100%;
+      width: 50%; /* Ajusta según el progreso actual */
+      background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
 
-.photo-placeholder {
-    width: min(80vw, 250px);
-    height: min(80vw, 250px);
-    max-width: 250px;
-    max-height: 250px;
-    border: 4px solid #ccc;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    background-color: #f8f8f8;
-    margin: auto;
-}
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
 
-/* 📸 Imagen y video dentro del círculo */
-.photo-box,
-.photo-box-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
+    .step {
+      font-size: 12px;
+      color: #9e9e9e;
+    }
 
-@media (max-width: 480px) {
+    .step.active {
+      color: #3a7bd5;
+      font-weight: 600;
+    }
+
+    /* Textos */
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.4;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .section-title i {
+      margin-right: 8px;
+      color: #3a7bd5;
+    }
+
+    /* Contenedor de la foto */
+    .photo-container {
+      background-color: #f1f1f1;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 25px;
+      position: relative;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
     .photo-placeholder {
-        width: 75vw;
-        height: 75vw;
-        max-width: 200px;
-        max-height: 200px;
+      width: 240px;
+      height: 240px;
+      border: 3px solid rgba(58, 123, 213, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background-color: #e8f0fe;
+      margin: 0 auto 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .photo-placeholder:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     }
 
     .photo-box,
     .photo-box-video {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-    }
-}
-
-.photo-instruction {
-    text-align: center;
-    font-size: 14px;
-    color: #666;
-    cursor: pointer;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border-radius: 50%;
-}
-
-.capture-btn {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 50px;
-    background-color: white;
-    border: 3px solid rgba(0, 0, 0, 0.4);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-    transition: transform 0.1s ease-in-out;
-    outline: none;
-}
-
-.capture-btn:active {
-    transform: translateX(-50%) scale(0.92);
-}
-/* ✅ Botón de continuar */
-.continue-btn {
-    align-self: center;
-    padding: 16px 74px;
-    font-size: 1.125rem;
-    border: none;
-    border-radius: 40px;
-    background-color: #616161;
-    color: #ffffff;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.continue-btn:hover {
-    background-color: #757575;
-}
-
-.continue-btn:disabled {
-    background-color: #bdbdbd;
-    cursor: not-allowed;
-}
-
-.hidden-canvas {
-    display: none !important; /* Oculta completamente los elementos canvas */
-    visibility: hidden;
-    position: absolute;
-    width: 0;
-    height: 0;
-    overflow: hidden;
-  }
-
-/* 🔍 Input oculto para subir imágenes */
-.upload-container {
-    text-align: center;
-    margin-top: 8px;
-}
-
-.hidden-input {
-    display: none;
-}
-
-.upload-link {
-    font-size: 16px;
-    color: #007bff;
-    text-decoration: none;
-    cursor: pointer;
-    transition: color 0.2s ease-in-out;
-}
-
-.upload-link:hover {
-    text-decoration: underline;
-    color: #0056b3;
-}
-/* 🌀 Loader de carga */
-.loader {
-    width: 50px;
-    padding: 8px;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: #253eb0;
-    --_m: 
-      conic-gradient(#0000 10%,#000),
-      linear-gradient(#000 0 0) content-box;
-    -webkit-mask: var(--_m);
-            mask: var(--_m);
-    -webkit-mask-composite: source-out;
-            mask-composite: subtract;
-    animation: l3 1s infinite linear;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-@keyframes l3 {
-    to {
-      transform: translate(-50%, -50%) rotate(1turn);
-    }
-}
-
-/* ✅❌ Animación de Check y X */
-.success-check,
-.error-x {
-    font-size: 60px;
-    font-weight: bold;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-    animation: fadeInScale 0.4s ease-in-out forwards;
-}
-
-.success-check {
-    color: green;
-}
-
-.error-x {
-    color: red;
-}
-
-/* 📌 Animación de aparición */
-@keyframes fadeInScale {
-    0% {
-        transform: translate(-50%, -50%) scale(0);
-        opacity: 0;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-}
-
-/* 🔄 Botón de reintentar en la parte inferior */
-.retry-option {
-    position: absolute;
-    bottom: 10px; /* Alineado en la parte inferior del cuadro */
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    width: 100%;
-}
-
-.retry-btn {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-    font-weight: bold;
-    display: block;
-    margin: 5px auto; /* Centrar */
-}
-
-.retry-btn:hover {
-    background-color: #cc0000;
-}
-
-/* 📱 **RESPONSIVE: Ajustes para móviles** */
-@media (max-width: 480px) {
-    .container {
-        padding: 15px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
     }
 
-    .title {
-        font-size: 22px;
+    .bi {
+      width: 22px;
+      height: 22px;
+      margin-right: 8px;
+      color: #3a7bd5; // Color institucional o azul moderno
+      vertical-align: middle;
+      transition: transform 0.3s ease;
     }
 
-    .subtitle {
-        font-size: 14px;
+    .bi-camera{
+      width: 22px;
+      height: 22px;
+      margin-right: 8px;
+      color: #ffffff; // Color institucional o azul moderno
+      vertical-align: middle;
+      transition: transform 0.3s ease;
     }
 
-    // .photo-placeholder {
-    //     width: 80%; /* Se adapta mejor a pantallas pequeñas */
-    //     // height: auto;
-    //     max-width: 320px;
-    //     min-height: 270px;
-    // }
+    .section-title .bi {
+      width: 26px;
+      height: 26px;
+    }
 
-    // .photo-box {
-    //     width: 150%;
-    //     height: 100%;
-    //     object-fit: cover;
-    //     border-radius: 50%; /* Hace que el video o imagen se mantenga redondo */
-    // }
+    .retry-btn .bi {
+      margin-right: 6px;
+    }
 
-    // .photo-box-video{
-    //     width: 130%;
-    //     height: 100%;
-    //     object-fit: cover;
-    //     border-radius: 50%; /* Hace que el video o imagen se mantenga redondo */
-    // }
+    .continue-btn .bi {
+      margin-left: 6px;
+    }
+
+    .capture-tips h4 .bi {
+      margin-right: 6px;
+      color: #3a7bd5;
+    }
+    
+    button:hover .bi {
+      transform: scale(1.1);
+    }
 
     .photo-instruction {
-        font-size: 14px;
+      text-align: center;
+      font-size: 15px;
+      color: #5a5a5a;
+      cursor: pointer;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      border-radius: 50%;
+      padding: 20px;
     }
 
+    .photo-instruction i {
+      font-size: 40px;
+      margin-bottom: 10px;
+      color: #3a7bd5;
+    }
+
+    /* Botón de captura */
     .capture-btn {
-        width: 40px;
-        height: 40px;
-        bottom: 8px;
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      background-color: white;
+      border: 4px solid #3a7bd5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease-in-out;
+      outline: none;
+      z-index: 5;
     }
 
+    .capture-btn::after {
+      content: '';
+      width: 70%;
+      height: 70%;
+      background-color: #3a7bd5;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .capture-btn:hover::after {
+      width: 75%;
+      height: 75%;
+    }
+
+    .capture-btn:active {
+      transform: translateX(-50%) scale(0.92);
+    }
+
+    /* Botones de acción */
+    .photo-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .btn-photo {
+      padding: 12px 20px;
+      font-size: 15px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-photo i {
+      margin-right: 8px;
+      font-size: 18px;
+    }
+
+    .btn-camera {
+      background-color: #3a7bd5;
+      color: white;
+    }
+
+    .btn-camera:hover {
+      background-color: #2c5fa5;
+      transform: translateY(-2px);
+    }
+
+    .btn-upload {
+      background-color: white;
+      color: #3a7bd5;
+      border: 2px solid #3a7bd5;
+    }
+
+    .btn-upload:hover {
+      background-color: #f0f5ff;
+      transform: translateY(-2px);
+    }
+
+    /* Botón de continuar */
+    .continue-btn {
+      width: 100%;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(58, 123, 213, 0.3);
+      margin-top: 20px;
+    }
+
+    .continue-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(58, 123, 213, 0.4);
+    }
+
+    .continue-btn:disabled {
+      background: linear-gradient(90deg, #c5c5c5, #e0e0e0);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Indicadores de estado */
     .loader {
-        width: 40px;
+      width: 60px;
+      height: 60px;
+      border: 5px solid rgba(58, 123, 213, 0.2);
+      border-radius: 50%;
+      border-top-color: #3a7bd5;
+      animation: spin 1s ease-in-out infinite;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
     .success-check,
     .error-x {
-        font-size: 40px;
-        top: 40%;
+      font-size: 70px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      animation: fadeInScale 0.5s ease-in-out forwards;
+    }
+
+    .success-check {
+      color: #2ecc71;
+    }
+
+    .error-x {
+      color: #e74c3c;
+    }
+
+    @keyframes fadeInScale {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Botón de cambio de cámara */
+    .toggle-camera-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: white;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 5;
+    }
+
+    .toggle-camera-btn i {
+      font-size: 18px;
+      color: #3a7bd5;
+      transition: transform 0.5s ease;
+    }
+
+    .toggle-camera-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle-camera-btn:active i {
+      transform: rotate(180deg);
+    }
+
+    /* Botón de reintentar */
+    .retry-option {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      width: 100%;
     }
 
     .retry-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      margin: 0 auto;
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+    }
+
+    .retry-btn i {
+      margin-right: 5px;
+      font-size: 16px;
+    }
+
+    .retry-btn:hover {
+      background-color: #c0392b;
+      transform: translateY(-2px);
+    }
+
+    /* Consejos de captura */
+    .capture-tips {
+      background-color: #f0f7ff;
+      border-left: 4px solid #3a7bd5;
+      padding: 12px 15px;
+      text-align: left;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .capture-tips h4 {
+      color: #3a7bd5;
+      margin-bottom: 5px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      text-transform: none;
+
+    }
+
+    .capture-tips h4 i {
+      margin-right: 5px;
+      font-size: 16px;
+    }
+
+    .capture-tips ul {
+      padding-left: 20px;
+      margin-top: 5px;
+    }
+
+    .capture-tips li {
+      margin-bottom: 3px;
+    }
+
+    /* Elementos ocultos */
+    .hidden-canvas {
+      display: none !important;
+      visibility: hidden;
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .hidden-input {
+      display: none;
+    }
+
+    /* Media queries */
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+        border-radius: 20px;
+        margin: 0px;
+
+      }
+
+      .title {
+        font-size: 24px;
+      }
+
+      .subtitle {
         font-size: 14px;
-        padding: 6px 12px;
+        margin-bottom: 20px;
+      }
+
+      .photo-placeholder {
+        width: 200px;
+        height: 200px;
+      }
+
+      .capture-btn {
+        width: 50px;
+        height: 50px;
+      }
+
+      .btn-photo {
+        padding: 10px 15px;
+        font-size: 14px;
+      }
+
+      .continue-btn {
+        padding: 14px;
+        font-size: 16px;
+      }
+
+      .photo-container {
+        padding: 15px;
+      }
+
+      .retry-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+      }
     }
 
-    .continue-btn {
-        font-size: 1rem;
-        padding: 12px 60px;
-    }
+
+.icon-sm {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 6px;
 }
 
-
-/* 🔄 Botón de alternar cámara con estilo limpio */
-.toggle-camera-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background-color: white;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease-in-out;
-}
-
-/* 🔄 Efecto de rotación al hacer clic */
-.toggle-camera-btn:active {
-    transform: rotate(180deg);
-}
-
-/* 🎥 Icono en el botón */
-.toggle-camera-btn::before {
-    content: "🔄";
-    font-size: 18px;
-}
-
-
-.photo-actions {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.btn-photo {
-    padding: 12px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
-}
-
-.btn-photo:first-child {
-    background-color: #007bff;
-    color: white;
-}
-
-.btn-photo:first-child:hover {
-    background-color: #0056b3;
-}
-
-.btn-photo:last-child {
-    background-color: #28a745;
-    color: white;
-}
-
-.btn-photo:last-child:hover {
-    background-color: #218838;
-}
-
-.hidden-input {
-    display: none;
+.icon-lg {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 6px;
+  color: #3a7bd5;
 }

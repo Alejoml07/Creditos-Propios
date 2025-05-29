@@ -17,12 +17,9 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const excludedUrls = [
-        'https://apigatewayleonisatest.azurewebsites.net/api/Productos/GetBannerByEvent',
-        'https://apigatewayleonisatest.azurewebsites.net/api/Productos/AddBannerEventos',
-        'https://apigatewayleonisatest.azurewebsites.net/api/fidelizacion/AddEventoContenido',
-        'https://apigatewayleonisatest.azurewebsites.net/api/fidelizacion/GetEventoContenidoByEvento',
-        'https://omnicanalidad.leonisa360.com/cupoejecutiva/rest/v1/CreditosDLM/DesencriptarJson',
+ 
         'https://api.openai.com/v1/chat/completions',
+        'https://api.ipify.org'
 
     ];
 

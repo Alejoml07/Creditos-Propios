@@ -23,7 +23,7 @@ import { AprobacionCreditoComponent } from './aprobacion-credito/aprobacion-cred
     FotoPersonaValidacionComponent,
     DocumentoTraseraValidacionComponent,
     CodigoOtpComponent,
-    AprobacionCreditoComponent
+    AprobacionCreditoComponent,
   ],
   imports: [
     CommonModule,

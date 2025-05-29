@@ -69,31 +69,43 @@ export class OpenIaService {
       'Authorization': `Bearer ${this.apiKey}`
     });
 
-    const promptText = `
-      Eres un experto en validación de imágenes de personas en tiempo real.
-      Tu tarea es analizar la imagen y determinar si:
-      - Contiene un rostro humano claramente visible y definido.
-      - La imagen tiene buena calidad, con un rostro bien nítido y sin desenfoques.
-      - No es una imagen tomada previamente de una galería o de la pantalla de otro dispositivo.
-      - No ha sido manipulada (captura de pantalla, foto de otra pantalla, etc.).
-      
-      Para evaluar la nitidez y calidad:
-      - El rostro debe estar bien iluminado y con buena resolución.
-      - No debe haber distorsiones o desenfoques significativos.
-      - La imagen debe tener una proporción adecuada de rostro visible.
+  const promptText = `
+Eres un sistema experto en verificación facial en tiempo real. Tu tarea es analizar una imagen para determinar si cumple con los requisitos mínimos de una foto viva, frontal, clara y sin obstrucciones.
 
-      Responde en formato JSON:
-      {
-        "esFotoTomadaEnVivo": true, 
-        "rostroDetectado": true,
-        "rostroNitido": true
-      } si la imagen es válida.
+Evalúa si la imagen cumple TODAS las siguientes condiciones:
 
-      Si hay problemas, responde:
-      {
-        "esFotoTomadaEnVivo": false,
-        "razon": "Explicación breve del problema."
-      }`;
+✅ ACEPTADO solo si:
+- Hay un **único rostro humano claramente visible**.
+- El rostro está **completamente descubierto**, **sin manos, tapabocas, cabello, gafas oscuras, ni ningún objeto** que cubra ojos, nariz o boca.
+- La persona está **mirando de frente**, con la cara centrada y visible.
+- La imagen tiene buena calidad, está bien iluminada y no está borrosa.
+- No es una imagen tomada de una pantalla, galería o foto de otro dispositivo.
+- No ha sido manipulada digitalmente (recortes, sobreposiciones, collages).
+
+---
+
+### RESPUESTA SI TODO ESTÁ BIEN:
+
+{
+  "esFotoTomadaEnVivo": true,
+  "rostroDetectado": true,
+  "rostroNitido": true,
+  "rostroCentrado": true,
+  "sinObstrucciones": true,
+  "mirandoAlFrente": true,
+  "unicoRostro": true,
+  "buenaIluminacion": true
+}
+
+---
+
+### RESPUESTA SI HAY ALGÚN PROBLEMA:
+
+{
+  "esFotoTomadaEnVivo": false,
+  "razon": "Motivo exacto del rechazo. Ejemplos: 'La persona no está mirando al frente', 'El rostro está parcialmente cubierto por una mano', 'Se detectan gafas oscuras que tapan los ojos', 'Hay más de un rostro', 'La imagen es una captura de pantalla'."
+}
+`.trim();
 
     const body = {
       model: "gpt-4o-mini",
@@ -142,42 +154,88 @@ analyzeDocument(base64Image: string): Observable<any> {
     'Authorization': `Bearer ${this.apiKey}`
   });
 
-  const promptText = `
-    Eres un experto en OCR y validación de cédulas de ciudadanía colombianas. 
-    Extrae el texto de la imagen y determina si es una cédula válida.
+const promptText = `
+Eres un sistema experto en validación documental y OCR para cédulas de ciudadanía colombianas.
 
-    **Criterios de validación obligatorios:**
-    1. **Documento impreso**: No manuscrito. No más de un documento en la imagen.
-    2. **Sin obstrucciones**: Nada debe tapar la cédula (objetos, papeles, dedos, reflejos, etc.).
-    3. **Encabezado obligatorio**: Debe contener 'REPÚBLICA DE COLOMBIA' y 'CÉDULA DE CIUDADANÍA'.
-    4. **Número de cédula (OBLIGATORIO y COMPLETAMENTE VISIBLE)**: 
-       - Debe detectarse claramente en la imagen y contener solo dígitos (puede incluir puntos o espacios).  
-       - **Si el número de cédula no se puede leer, es parcial, ilegible o "no visible", el documento ES INVÁLIDO.**  
-    5. **Nombre completo**: Debe incluir al menos un nombre y un apellido.
-    6. **Información relevante**: Puede incluir 'NOMBRES', 'APELLIDOS', 'FECHA DE NACIMIENTO'.
-    7. **Sin referencias a otros documentos**: No debe mencionar pasaportes, licencias de conducción, etc.
-    8. **Formato estructurado**: Debe seguir el diseño oficial de una cédula colombiana.
-    9. **No es una imagen tomada previamente de una galería o de la pantalla de otro dispositivo, No ha sido manipulada (captura de pantalla, foto de otra pantalla, etc.). **
+Tu tarea es:
+- Analizar visualmente una imagen de cédula de ciudadanía colombiana.
+- Extraer campos clave.
+- Validar si el documento es real, legible, auténtico y apto para una solicitud de crédito.
 
+---
 
-    **Formato de respuesta JSON (estricto):**
-    - Si el documento es válido:
+### Requisitos mínimos (todos deben cumplirse):
+
+1. **Documento físico original**
+   - No se aceptan imágenes escaneadas, capturas de pantalla o manipuladas.
+   - Rechaza imágenes con recortes artificiales, firmas agregadas o sellos sospechosos.
+   - La imagen debe ser de una cédula física, no de un documento digital o editado.
+   - No puede ser desde un celular o tableta.
+
+2. **Campos obligatorios que deben estar completamente legibles y visibles**:
+   - **numeroCedula**: Número de 7 a 10 dígitos, visible sin estar tapado o borroso.
+   - **nombres**: Al menos un nombre completo visible.
+   - **apellidos**: Al menos un apellido visible y legible.
+   - **encabezado**: El texto "REPÚBLICA DE COLOMBIA" y "CÉDULA DE CIUDADANÍA" debe estar presente.
+
+ Muy importante: **NO devuelvas errores en estos campos si puedes leerlos parcial o totalmente. SOLO marca un campo como error si realmente NO se ve o es ilegible con claridad.**
+
+3. **Condiciones visuales permitidas**:
+   - Se permiten dedos o reflejos **si no cubren texto importante**.
+   - La cédula debe estar enfocada y completamente dentro del encuadre.
+
+---
+
+###  Formato de salida JSON:
+
+-  Si todos los campos son legibles:
+
+{
+  "esDocumentoValido": true,
+  "numeroCedula": "Número extraído, devolverlo sin puntos ni espacios",
+  "nombres": "Nombre extraído",
+  "apellidos": "Apellido extraído",
+  "textoExtraido": "Texto completo extraído",
+  "recomendaciones": []
+}
+
+- Si uno o más campos NO son visibles o legibles (SOLO si realmente están ocultos o borrosos):
+
+{
+  "esDocumentoValido": false,
+  "errores": [
     {
-      "esDocumentoValido": true,
-      "numeroCedula": "Número extraído",
-      "nombres": "Nombre detectado",
-      "apellidos": "Apellido detectado",
-      "textoExtraido": "Texto detectado"
+      "campo": "numeroCedula",
+      "detalle": "Razon exacta por la cual se rechaza el documento"
     }
+  ],
+  "recomendaciones": [
+    "Toma la foto con mejor enfoque y encuadre.",
+    "Evita sombras, reflejos o dedos que cubran los datos."
+  ]
+}
 
-    - **Si el número de cédula NO es visible o no se puede leer, la respuesta debe ser:**  
+-  Si detectas manipulación digital:
+
+{
+  "esDocumentoValido": false,
+  "errores": [
     {
-      "esDocumentoValido": false,
-      "razon": "Número de cédula no visible o ilegible. Documento inválido."
+      "campo": "estructura",
+      "detalle": "El documento presenta señales de edición, sobreposición o no corresponde al diseño original."
     }
+  ],
+  "recomendaciones": [
+    "Utiliza una foto real tomada directamente de una cédula física.",
+    "Evita usar imágenes escaneadas o manipuladas."
+  ]
+}
+
+---
+ Reglas importantes:
+- Si un campo se puede leer en la imagen, debe considerarse válido.
+- No reportes todos los errores por defecto.
 `;
-
-
 
   const body = {
     model: "gpt-4o-mini",

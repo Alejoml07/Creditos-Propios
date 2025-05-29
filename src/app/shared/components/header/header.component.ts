@@ -3,9 +3,10 @@ import { NavService } from '../../service/nav.service';
 import { StorageService } from '../../service/storage.service';
 
 @Component({
-  selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+    selector: 'app-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss'],
+    standalone: false
 })
 export class HeaderComponent implements OnInit {
   public right_sidebar: boolean = false;

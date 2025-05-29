@@ -8,6 +8,9 @@ import { FotoPersonaValidacionComponent } from './foto-persona-validacion/foto-p
 import { DocumentoTraseraValidacionComponent } from './documento-trasera-validacion/documento-trasera-validacion.component';
 import { CodigoOtpComponent } from './codigo-otp/codigo-otp.component';
 import { AprobacionCreditoComponent } from './aprobacion-credito/aprobacion-credito.component';
+import { CreditDeniedComponent } from './credit-denied/credit-denied.component';
+import { IdentityDeniedComponent } from './identity-denied/identity-denied.component';
+import { FlowStepGuard } from 'src/app/shared/guards/flow-step/flow-step.guard';
 
 const routes: Routes = [
   {
@@ -34,6 +37,8 @@ const routes: Routes = [
       {
         path: 'documento-validacion',
         component: DocumentoValidacionComponent,
+        // canActivate: [FlowStepGuard]
+
         // canActivate: [authGuard]
 
       },
@@ -45,13 +50,17 @@ const routes: Routes = [
       },
       {
         path: 'foto-validacion',
-        component: FotoPersonaValidacionComponent,        
+        component: FotoPersonaValidacionComponent, 
+        canActivate: [FlowStepGuard]
+       
         // canActivate: [authGuard]     
         
       },
       {
         path: 'codigo-otp',
         component: CodigoOtpComponent,
+        canActivate: [FlowStepGuard]
+
         // canActivate: [authGuard]
       },
       {
@@ -59,7 +68,16 @@ const routes: Routes = [
         component: AprobacionCreditoComponent,
         // canActivate: [authGuard]
       },
-
+      {
+        path: 'credit-denied',
+        component: CreditDeniedComponent,
+        // canActivate: [authGuard]
+      },
+      {
+        path: 'identity-denied',
+        component: IdentityDeniedComponent,
+        // canActivate: [authGuard]
+      },
 
       
     ]

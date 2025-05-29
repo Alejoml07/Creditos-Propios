@@ -1,34 +1,45 @@
+<div class="container otp-container">
+  <div class="text-center">
+    <h1 class="title">Verificación</h1>
+    <p class="subtitle">Te hemos enviado un código. Elige el método o ingrésalo aquí.</p>
+  </div>
 
-<div class="otp-page">
-  <h2 class="otp-title">Elige un método de verificación</h2>
-  <p class="otp-info">El código de verificación será enviado.</p>
-  
   <div class="method-selection">
-    <button class="method-button sms" [disabled]="selectedMethod !== null" (click)="selectMethod('sms')">
-      <span class="icon">📩</span> SMS
-    </button>
-    <!-- <button class="method-button email" [disabled]="selectedMethod !== null" (click)="selectMethod('email')">
-      <span class="icon">✉️</span> Correo
-    </button> -->
-    <button class="method-button whatsapp" [disabled]="selectedMethod !== null" (click)="selectMethod('whatsapp')">
-      <span class="icon">📱</span> WhatsApp
+    <button class="method-button btn-upload" [disabled]="selectedMethod !== null" (click)="selectMethod('sms')">
+      Reenviar mensaje
     </button>
   </div>
 
   <div *ngIf="selectedMethod" class="countdown">
-    Código enviado vía {{ selectedMethod === 'sms' ? 'SMS' : 'Correo' }}. 
-    Espera {{ countdown }}s para volver a seleccionar.
+    Código enviado. Espera {{ countdown }}s para reenviar.
   </div>
-  
-  <form [formGroup]="otpForm"  class="otp-form">
-    <label for="otp" class="otp-label">Código de verificación*</label>
-    <div class="otp-input-container">
-      <input id="otp" type="text" formControlName="otp" class="otp-input" maxlength="6" placeholder="_ _ _ _ _ _">
-      <div *ngIf="isLoading" class="spinner"></div>
+
+  <form [formGroup]="otpForm" class="otp-form">
+    <div class="form-group">
+      <div class="input-container with-loader">
+        <input
+          id="otp"
+          type="text"
+          formControlName="otp"
+          class="otp-input"
+          maxlength="6"
+          placeholder=" "
+        />
+        <label for="otp">Código de verificación*</label>
+        <div *ngIf="isLoading" class="mini-loader"></div>
+      </div>
+      <div class="error-message" *ngIf="!isOtpValid">
+        Código inválido, inténtalo de nuevo
+      </div>
     </div>
-    <div *ngIf="!isOtpValid" class="error-message">Código inválido, inténtalo de nuevo</div>
   </form>
 
-  <button type="button" (click)="validateOtp()" class="continue-btn" >Continuar</button>
-
+  <button
+    class="continue-btn"
+    type="button"
+    (click)="validateOtp()"
+    [disabled]="otpForm.invalid || isLoading"
+  >
+    Continuar
+  </button>
 </div>
