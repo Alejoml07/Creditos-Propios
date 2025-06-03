@@ -16,17 +16,17 @@ export class UsuariosService extends CoreService  {
     super(http);
 }
 
-// consultarCedula(jsonData: any): Observable<any> {
-
-//   return this.post<any>('/AsignarCupo',jsonData);
-
-// }
-
 consultarCedula(jsonData: any): Observable<any> {
 
-  return this.post<any>('/Consulta360',jsonData);
+  return this.post<any>('/AsignarCupo',jsonData);
 
 }
+
+// consultarCedula(jsonData: any): Observable<any> {
+
+//   return this.post<any>('/Consulta360',jsonData);
+
+// }
 
 
 validarUsuario(body: any): Observable<any> {

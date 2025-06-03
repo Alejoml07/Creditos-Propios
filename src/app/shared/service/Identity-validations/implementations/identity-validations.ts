@@ -10,6 +10,7 @@ import { ERROR_MESSAGE } from 'src/app/components/registro-datos/codigo-otp/cons
 import { IIdentityValidations } from '../interfaces/identity-validations.interfaces';
 import { FlowService } from '../../flow/flow.service';
 import { UserSessionService } from '../../user-session.service';
+import Swal from 'sweetalert2';
 
 @Injectable({ providedIn: 'root' })
 export class IdentityValidationsImplementation implements IIdentityValidations  {
@@ -76,6 +77,8 @@ export class IdentityValidationsImplementation implements IIdentityValidations  
   }
 
   async validarCodigoOtp(code: string): Promise<boolean> {
+
+    this.mostrarAlertaValidacionIdentidad();
     const datos = this.userSessionService.getDatosBasicos();
     const payload = { IdCliente: datos.document, Celular: datos.cellular, OTP: code };
 
@@ -254,7 +257,7 @@ export class IdentityValidationsImplementation implements IIdentityValidations  
   
     if (!code) {
 
-      this.loaderService.hide();
+      Swal.close();
 
       await this.actionMessageService.onCallMessage(ERROR_MESSAGE);
 
@@ -269,13 +272,15 @@ export class IdentityValidationsImplementation implements IIdentityValidations  
 
       case 'Low':
 
+        Swal.close();
+
         this.flowService.navigateToStep('aprobacion');
 
       break;
   
       case 'Medium':
 
-        this.loaderService.hide();
+        Swal.close();
 
         const passed = await this.securityQuestionService.showSecurityQuestionsModal();
 
@@ -294,7 +299,7 @@ export class IdentityValidationsImplementation implements IIdentityValidations  
   
       case 'High':
 
-        this.loaderService.hide();
+        Swal.close();
 
         this.flowService.navigateToStep('identity-denied'); 
 
@@ -334,4 +339,324 @@ formatearFecha(fechaISO: string): string {
       return fechaISO; 
     }
   }
+
+
+  // Función para mostrar la alerta de validación de identidad
+private mostrarAlertaValidacionIdentidad(): void {
+  Swal.fire({
+    title: '',
+    html: `
+      <style>
+        .loading-container {
+          text-align: center;
+          padding: 20px 0;
+        }
+        
+        .identity-scanner {
+          position: relative;
+          width: 140px;
+          height: 140px;
+          margin: 0 auto 25px;
+          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+          border-radius: 50%;
+          border: 3px solid #cbd5e1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        
+        .identity-icon {
+          font-size: 45px;
+          color: #64748b;
+          z-index: 3;
+          animation: identityFloat 2s ease-in-out infinite;
+        }
+        
+        .identity-rings {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+        
+        .ring {
+          position: absolute;
+          border: 2px solid transparent;
+          border-radius: 50%;
+          animation: ringPulse 2s ease-in-out infinite;
+        }
+        
+        .ring-1 {
+          width: 60px;
+          height: 60px;
+          border-top: 2px solid #3b82f6;
+          animation: ringRotate 3s linear infinite;
+        }
+        
+        .ring-2 {
+          width: 90px;
+          height: 90px;
+          border-right: 2px solid #1d4ed8;
+          animation: ringRotate 2s linear infinite reverse;
+        }
+        
+        .ring-3 {
+          width: 120px;
+          height: 120px;
+          border-left: 2px solid #3b82f6;
+          opacity: 0.6;
+          animation: ringRotate 4s linear infinite;
+        }
+        
+        .shield-overlay {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 20px;
+          color: #3b82f6;
+          z-index: 2;
+          animation: shieldPulse 2s ease-in-out infinite;
+        }
+        
+        .loading-title {
+          font-size: 24px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-bottom: 8px;
+          animation: titlePulse 2s ease-in-out infinite;
+        }
+        
+        .loading-subtitle {
+          font-size: 15px;
+          color: #64748b;
+          margin-bottom: 20px;
+          font-weight: 500;
+        }
+        
+        .progress-container {
+          width: 100%;
+          height: 6px;
+          background: #e2e8f0;
+          border-radius: 10px;
+          overflow: hidden;
+          margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+          height: 100%;
+          background: linear-gradient(90deg, #3b82f6, #1d4ed8, #3b82f6);
+          background-size: 200% 100%;
+          border-radius: 10px;
+          animation: progressFlow 1.5s ease-in-out infinite, progressGrow 4s ease-out infinite;
+        }
+        
+        .loading-steps {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 20px;
+          padding: 0 5px;
+        }
+        
+        .step {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          opacity: 0.3;
+          transition: all 0.5s ease;
+        }
+        
+        .step.active {
+          opacity: 1;
+        }
+        
+        .step-icon {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: #e2e8f0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 5px;
+          font-size: 14px;
+          transition: all 0.5s ease;
+        }
+        
+        .step.active .step-icon {
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+          color: white;
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .step-text {
+          font-size: 10px;
+          color: #64748b;
+          font-weight: 500;
+          text-align: center;
+          max-width: 60px;
+        }
+        
+        .security-badge {
+          display: inline-flex;
+          align-items: center;
+          background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+          border: 1px solid #bae6fd;
+          border-radius: 20px;
+          padding: 6px 12px;
+          margin-top: 20px;
+          font-size: 12px;
+          color: #1e40af;
+          font-weight: 600;
+        }
+        
+        .security-icon {
+          margin-right: 6px;
+          font-size: 14px;
+        }
+        
+        .tip-container {
+          margin-top: 25px;
+          padding: 12px 16px;
+          background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+          border-radius: 10px;
+          border-left: 4px solid #3b82f6;
+        }
+        
+        .tip-text {
+          font-size: 13px;
+          color: #1e40af;
+          margin: 0;
+          font-weight: 500;
+        }
+        
+        @keyframes ringRotate {
+          0% { transform: translate(-50%, -50%) rotate(0deg); }
+          100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        @keyframes ringPulse {
+          0%, 100% { opacity: 0.8; }
+          50% { opacity: 0.4; }
+        }
+        
+        @keyframes identityFloat {
+          0%, 100% { transform: translateY(0px) scale(1); }
+          50% { transform: translateY(-4px) scale(1.05); }
+        }
+        
+        @keyframes shieldPulse {
+          0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+          50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        }
+        
+        @keyframes titlePulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        
+        @keyframes progressFlow {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        
+        @keyframes progressGrow {
+          0% { width: 0%; }
+          60% { width: 75%; }
+          100% { width: 100%; }
+        }
+        
+        .swal2-popup {
+          border-radius: 20px !important;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
+        }
+      </style>
+      
+      <div class="loading-container">
+        <div class="identity-scanner">
+          <div class="identity-icon">🆔</div>
+          <div class="identity-rings">
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <div class="ring ring-3"></div>
+          </div>
+          <div class="shield-overlay">🛡️</div>
+        </div>
+        
+        <div class="loading-title">Verificando identidad</div>
+        <div class="loading-subtitle">Procesando datos biométricos...</div>
+        
+        <div class="progress-container">
+          <div class="progress-bar"></div>
+        </div>
+        
+        <div class="loading-steps">
+          <div class="step active" id="identity-step1">
+            <div class="step-icon">🔍</div>
+            <div class="step-text">Comparando</div>
+          </div>
+          <div class="step" id="identity-step2">
+            <div class="step-icon">🧬</div>
+            <div class="step-text">Analizando biometría</div>
+          </div>
+          <div class="step" id="identity-step3">
+            <div class="step-icon">🔐</div>
+            <div class="step-text">Verificando seguridad</div>
+          </div>
+          <div class="step" id="identity-step4">
+            <div class="step-icon">✅</div>
+            <div class="step-text">Confirmando</div>
+          </div>
+        </div>
+        
+        <div class="security-badge">
+          <span class="security-icon">🔒</span>
+          Validación segura en proceso
+        </div>
+        
+        <div class="tip-container">
+          <p class="tip-text">🔐 Tu información está protegida.</p>
+        </div>
+      </div>
+    `,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    background: '#ffffff',
+    width: '450px',
+    padding: '25px',
+    didOpen: () => {
+      // Animación de pasos secuencial para identidad
+      let currentStep = 1;
+      const stepInterval = setInterval(() => {
+        // Desactivar paso anterior
+        if (currentStep > 1) {
+          document.getElementById(`identity-step${currentStep - 1}`)?.classList.remove('active');
+        }
+        
+        // Activar paso actual
+        if (currentStep <= 4) {
+          document.getElementById(`identity-step${currentStep}`)?.classList.add('active');
+          currentStep++;
+        } else {
+          // Reiniciar ciclo
+          document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+          currentStep = 1;
+          document.getElementById('identity-step1')?.classList.add('active');
+        }
+      }, 1500);
+      
+      // Guardar el intervalo para poder limpiarlo después
+      (window as any).loadingIdentityStepInterval = stepInterval;
+    },
+    willClose: () => {
+      // Limpiar intervalo al cerrar
+      if ((window as any).loadingIdentityStepInterval) {
+        clearInterval((window as any).loadingIdentityStepInterval);
+      }
+    }
+  });
+}
 }

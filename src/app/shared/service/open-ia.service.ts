@@ -69,22 +69,23 @@ export class OpenIaService {
       'Authorization': `Bearer ${this.apiKey}`
     });
 
-  const promptText = `
-Eres un sistema experto en verificación facial en tiempo real. Tu tarea es analizar una imagen para determinar si cumple con los requisitos mínimos de una foto viva, frontal, clara y sin obstrucciones.
+const promptText = `
+Eres un sistema experto en verificación facial en tiempo real. Tu tarea es analizar una imagen para determinar si cumple con los requisitos mínimos de una foto viva, clara y segura para procesos de autenticación facial.
 
-Evalúa si la imagen cumple TODAS las siguientes condiciones:
+Evalúa si la imagen cumple con las siguientes condiciones **mínimas de seguridad**, aplicando una evaluación **tolerante con la calidad**, especialmente considerando que muchas personas usan dispositivos de gama baja. No seas estricto con resolución, definición o iluminación, mientras el rostro sea reconocible y no haya indicios de manipulación o suplantación.
 
-✅ ACEPTADO solo si:
-- Hay un **único rostro humano claramente visible**.
-- El rostro está **completamente descubierto**, **sin manos, tapabocas, cabello, gafas oscuras, ni ningún objeto** que cubra ojos, nariz o boca.
-- La persona está **mirando de frente**, con la cara centrada y visible.
-- La imagen tiene buena calidad, está bien iluminada y no está borrosa.
-- No es una imagen tomada de una pantalla, galería o foto de otro dispositivo.
-- No ha sido manipulada digitalmente (recortes, sobreposiciones, collages).
+✅ ACEPTADO si:
+- Hay un **único rostro humano** claramente reconocible.
+- El rostro está **visiblemente descubierto**, es decir, **sin obstrucciones graves** (como manos, tapabocas, gafas oscuras u objetos que oculten los ojos, nariz o boca por completo).
+- **Se permite cabello en la frente, barba, arrugas o cualquier rasgo natural**, siempre que el rostro sea visible y no esté cubierto significativamente.
+- El rostro está **mayormente visible**, aunque no esté perfectamente centrado o completamente recto.
+- La imagen **no debe ser una foto de una pantalla, una imagen impresa, ni estar manipulada digitalmente** (recortes, filtros, montajes).
+
+⚠️ No se requiere una expresión neutra, alineación exacta ni calidad profesional. La prioridad es que sea una foto auténtica, tomada en vivo, donde se reconozca claramente un solo rostro sin indicios de suplantación.
 
 ---
 
-### RESPUESTA SI TODO ESTÁ BIEN:
+### RESPUESTA SI LA IMAGEN ES ACEPTADA:
 
 {
   "esFotoTomadaEnVivo": true,
@@ -92,7 +93,6 @@ Evalúa si la imagen cumple TODAS las siguientes condiciones:
   "rostroNitido": true,
   "rostroCentrado": true,
   "sinObstrucciones": true,
-  "mirandoAlFrente": true,
   "unicoRostro": true,
   "buenaIluminacion": true
 }
@@ -103,7 +103,7 @@ Evalúa si la imagen cumple TODAS las siguientes condiciones:
 
 {
   "esFotoTomadaEnVivo": false,
-  "razon": "Motivo exacto del rechazo. Ejemplos: 'La persona no está mirando al frente', 'El rostro está parcialmente cubierto por una mano', 'Se detectan gafas oscuras que tapan los ojos', 'Hay más de un rostro', 'La imagen es una captura de pantalla'."
+  "razon": "Motivo exacto del rechazo. Ejemplos: 'El rostro está cubierto por una mano', 'Se detectan dos rostros', 'La imagen parece una captura de pantalla', 'La calidad es tan baja que no se reconoce ningún rostro'."
 }
 `.trim();
 

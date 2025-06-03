@@ -1,4 +1,4 @@
- <div class="container">
+<div class="container" *ngIf="!isLoading && cupoOtorgado !== null">
     <div class="approval-card">
       <div class="header-banner"></div>
       
@@ -12,7 +12,7 @@
       <div class="content-area">
         <h1 class="title">¡Tu cupo de crédito ha sido aprobado!</h1>
         <p class="subtitle">Ya puedes comenzar a disfrutar de Tu Crédito Leonisa. Compra hoy y paga después.</p>
-        <p class="subtitle">¡Asi es el nuevo poder Leonisa!.</p>
+        <p class="subtitle">¡Así es el nuevo poder Leonisa!.</p>
 
         <div class="cupo-box">
           <span class="etiqueta">Tu cupo de crédito disponible</span>
@@ -26,7 +26,7 @@
             <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
-            <span class="benefit-text">Ahora puedes comprar con tu propio cupo de crédito y pagar hasta en 6 coutas</span>
+            <span class="benefit-text">Ahora puedes comprar con tu propio cupo de crédito y pagar hasta en 6 cuotas</span>
           </div>
           
           <!-- <div class="benefit-item">

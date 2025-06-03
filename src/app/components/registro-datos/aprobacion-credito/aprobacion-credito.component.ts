@@ -18,7 +18,7 @@ export class AprobacionCreditoComponent implements OnInit {
 
   loaderService: LoaderService = inject(LoaderService);
   private logService: LogService = inject(LogService);
-    private userSessionService: UserSessionService = inject(UserSessionService);
+  private userSessionService: UserSessionService = inject(UserSessionService);
   
 
   constructor(private usuariosService: UsuariosService, private router: Router) {}
@@ -33,9 +33,9 @@ export class AprobacionCreditoComponent implements OnInit {
     if (datosBasicos) {
       const payload = { 
         IdCliente: datosBasicos.document,
-        // FechaExpedicion: datosBasicos.documentExpedition,
         tipoIdentificacion: datosBasicos.documentType,  
-        // primerApellido: datosBasicos.lastName,
+        OrigenConsulta: "flujo Créditos Propios",
+        TipoConsulta:"PromedioConTransunion"
       };
 
       this.usuariosService.consultarCedula(payload).subscribe({
@@ -51,11 +51,17 @@ export class AprobacionCreditoComponent implements OnInit {
             ServiceResponse: JSON.stringify(response)
           });
 
+          if (this.cupoOtorgado < 100) {
+            this.router.navigate(['/registro/credit-denied']);
+            this.loaderService.hide();
+            return;
+          }
+
           if (response?.result?.cupoAsignado !== undefined) {
             console.log('Cupo asignado:', response.result.cupoAsignado);
             this.cupoOtorgado = response.result.cupoAsignado;
           }
-
+          this.isLoading = false;
           this.loaderService.hide();   
         },
         error: async (error) => {

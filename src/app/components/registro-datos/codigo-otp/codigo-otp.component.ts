@@ -120,15 +120,12 @@ export class CodigoOtpComponent {
       return;
     }
 
-    this.loaderService.show();
-
     const otp = this.otpForm.get('otp')?.value;
 
     const isValid = await this.identityService.validarCodigoOtp(otp);
 
     this.isOtpValid = isValid;
 
-    this.loaderService.hide();
 
     if (!isValid) {
 

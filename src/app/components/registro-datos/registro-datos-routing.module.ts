@@ -51,7 +51,7 @@ const routes: Routes = [
       {
         path: 'foto-validacion',
         component: FotoPersonaValidacionComponent, 
-        canActivate: [FlowStepGuard]
+        // canActivate: [FlowStepGuard]
        
         // canActivate: [authGuard]     
         
@@ -59,7 +59,7 @@ const routes: Routes = [
       {
         path: 'codigo-otp',
         component: CodigoOtpComponent,
-        canActivate: [FlowStepGuard]
+        // canActivate: [FlowStepGuard]
 
         // canActivate: [authGuard]
       },

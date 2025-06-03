@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { DocumentValidationService } from 'src/app/shared/service/document-validation/document-validation.service';
 import { DocumentoValido, ValidationResult } from 'src/app/shared/service/document-validation/interfaces/document-validator.interface';
 import { GoogleVisionService } from 'src/app/shared/service/google-vision.service';
+import { LoaderService } from 'src/app/shared/service/loader/loader.service';
 import { OpenIaService } from 'src/app/shared/service/open-ia.service';
 import { UserSessionService } from 'src/app/shared/service/user-session.service';
 import { UsuariosService } from 'src/app/shared/service/usuarios.service';
@@ -24,6 +25,8 @@ export class DocumentoValidacionComponent {
   photoBase64: string | null = null; // Solo para validación
   private userSessionService: UserSessionService = inject(UserSessionService);
   private documentValidationService = inject(DocumentValidationService);
+  loaderService: LoaderService = inject(LoaderService);
+  
   
 
 
@@ -150,7 +153,7 @@ onPhotoUpload(event: Event): void {
   const documentoActual = datosBasicos.document;
   this.isLoading = true;
   this.validationComplete = false;
-  Swal.fire({ title: 'Validando documento...', didOpen: () => Swal.showLoading() });
+  this.mostrarAlertaCarga();
 
   this.documentValidationService.validarDocumento(base64Data).subscribe(
     (response) => {
@@ -164,10 +167,16 @@ onPhotoUpload(event: Event): void {
 
         if (resultado.numeroCedula !== documentoActual) {
           this.IsCorrectPhoto = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al validar el documento',
+            text: 'La cédula no coincide con la registrada.',
+          });
           console.warn('⚠️ La cédula no coincide con la registrada.');
         } else {
           this.IsCorrectPhoto = true;
           console.log('✔️ La cédula coincide correctamente.');
+          this.onSubmit();
         }
 
         console.log('Texto extraído:', resultado.textoExtraido);
@@ -197,34 +206,263 @@ onPhotoUpload(event: Event): void {
   );
 }
 
+// Función separada para mostrar la alerta de carga
+private mostrarAlertaCarga(): void {
+  Swal.fire({
+    title: '',
+    html: `
+      <style>
+        .loading-container {
+          text-align: center;
+          padding: 20px 0;
+        }
+        
+        .document-scanner {
+          position: relative;
+          width: 120px;
+          height: 80px;
+          margin: 0 auto 25px;
+          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+          border-radius: 12px;
+          border: 2px solid #cbd5e1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        
+        .document-icon {
+          font-size: 32px;
+          color: #64748b;
+          z-index: 2;
+          animation: documentFloat 2s ease-in-out infinite;
+        }
+        
+        .scan-line {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+          animation: scanMove 2s linear infinite;
+          box-shadow: 0 0 10px #3b82f6;
+        }
+        
+        .loading-title {
+          font-size: 22px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-bottom: 8px;
+          animation: titlePulse 2s ease-in-out infinite;
+        }
+        
+        .loading-subtitle {
+          font-size: 15px;
+          color: #64748b;
+          margin-bottom: 20px;
+          font-weight: 500;
+        }
+        
+        .progress-container {
+          width: 100%;
+          height: 6px;
+          background: #e2e8f0;
+          border-radius: 10px;
+          overflow: hidden;
+          margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+          height: 100%;
+          background: linear-gradient(90deg, #3b82f6, #1d4ed8, #3b82f6);
+          background-size: 200% 100%;
+          border-radius: 10px;
+          animation: progressFlow 1.5s ease-in-out infinite, progressGrow 3s ease-out infinite;
+        }
+        
+        .loading-steps {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 20px;
+          padding: 0 10px;
+        }
+        
+        .step {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          opacity: 0.3;
+          transition: all 0.5s ease;
+        }
+        
+        .step.active {
+          opacity: 1;
+        }
+        
+        .step-icon {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: #e2e8f0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 5px;
+          font-size: 12px;
+          transition: all 0.5s ease;
+        }
+        
+        .step.active .step-icon {
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+          color: white;
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .step-text {
+          font-size: 11px;
+          color: #64748b;
+          font-weight: 500;
+          text-align: center;
+        }
+        
+        .tip-container {
+          margin-top: 25px;
+          padding: 12px 16px;
+          background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+          border-radius: 10px;
+          border-left: 4px solid #3b82f6;
+        }
+        
+        .tip-text {
+          font-size: 13px;
+          color: #1e40af;
+          margin: 0;
+          font-weight: 500;
+        }
+        
+        @keyframes scanMove {
+          0% { transform: translateY(-5px); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateY(85px); opacity: 0; }
+        }
+        
+        @keyframes documentFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-3px); }
+        }
+        
+        @keyframes titlePulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        
+        @keyframes progressFlow {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        
+        @keyframes progressGrow {
+          0% { width: 0%; }
+          70% { width: 85%; }
+          100% { width: 100%; }
+        }
+        
+        .swal2-popup {
+          border-radius: 20px !important;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
+        }
+      </style>
+      
+      <div class="loading-container">
+        <div class="document-scanner">
+          <div class="document-icon">📄</div>
+          <div class="scan-line"></div>
+        </div>
+        
+        <div class="loading-title">Analizando documento</div>
+        <div class="loading-subtitle">Procesando información...</div>
+        
+        <div class="progress-container">
+          <div class="progress-bar"></div>
+        </div>
+        
+        <div class="loading-steps">
+          <div class="step active" id="step1">
+            <div class="step-icon">🔍</div>
+            <div class="step-text">Detectando</div>
+          </div>
+          <div class="step" id="step2">
+            <div class="step-icon">📋</div>
+            <div class="step-text">Extrayendo</div>
+          </div>
+          <div class="step" id="step3">
+            <div class="step-icon">✓</div>
+            <div class="step-text">Validando</div>
+          </div>
+        </div>
+        
+        <div class="tip-container">
+          <p class="tip-text">💡 Mantén el documento bien iluminado para mejores resultados</p>
+        </div>
+      </div>
+    `,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    background: '#ffffff',
+    width: '420px',
+    padding: '25px',
+    didOpen: () => {
+      // Animación de pasos secuencial
+      let currentStep = 1;
+      const stepInterval = setInterval(() => {
+        // Desactivar paso anterior
+        if (currentStep > 1) {
+          document.getElementById(`step${currentStep - 1}`)?.classList.remove('active');
+        }
+        
+        // Activar paso actual
+        if (currentStep <= 3) {
+          document.getElementById(`step${currentStep}`)?.classList.add('active');
+          currentStep++;
+        } else {
+          // Reiniciar ciclo
+          document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+          currentStep = 1;
+          document.getElementById('step1')?.classList.add('active');
+        }
+      }, 1000);
+      
+      // Guardar el intervalo para poder limpiarlo después
+      (window as any).loadingStepInterval = stepInterval;
+    },
+    willClose: () => {
+      // Limpiar intervalo al cerrar
+      if ((window as any).loadingStepInterval) {
+        clearInterval((window as any).loadingStepInterval);
+      }
+    }
+  });
+}
+
 
  onSubmit(): void {
   if (!this.IsCorrectPhoto) return;
 
-  // Mostrar alerta con un GIF de carga
-  Swal.fire({
-    title: '<span style="color: #00d9ff; font-weight: bold; font-size: 24px;">Pay</span>',
-    html: `
-      <p style="color: #333; font-size: 16px;">Espera un momento, estamos validando tu información</p>
-    `,
-    didOpen: () => {
-      Swal.showLoading(); // Activar el loading nativo de SweetAlert2
-    },
-    showConfirmButton: false,
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    background: '#fff',
-    padding: '20px',
-    width: '400px',
-  });
+  this.loaderService.show();
 
-  // Simular proceso de validación (ejemplo: cerrar el modal después de 3 segundos)
-  setTimeout(() => {
-    Swal.close(); // Cerrar modal de carga 
-    this.enviarImagenAzure()
-    this.router.navigate(['/registro/aprobacion-credito'])
+  if (this.photoBase64) {
 
-  }, 3000);
+    this.enviarImagenAzure();
+
+  }
+
+  this.loaderService.hide();
+
+  this.router.navigate(['/registro/codigo-otp']);
+
 }
 
 enviarImagenAzure(): void {

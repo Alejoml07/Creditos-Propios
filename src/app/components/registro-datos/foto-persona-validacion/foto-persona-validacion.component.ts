@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild, ChangeDetectorRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FlowService } from 'src/app/shared/service/flow/flow.service';
+import { LoaderService } from 'src/app/shared/service/loader/loader.service';
 import { OpenIaService } from 'src/app/shared/service/open-ia.service';
 import { RekognitionService } from 'src/app/shared/service/rekognition.service';
 import { UserSessionService } from 'src/app/shared/service/user-session.service';
@@ -32,9 +33,9 @@ export class FotoPersonaValidacionComponent {
     flowService: FlowService = inject(FlowService);
 
     private userSessionService: UserSessionService = inject(UserSessionService);
+
+    loaderService: LoaderService = inject(LoaderService);
     
-
-
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -164,7 +165,7 @@ validatePhoto(imageBase64: string): void {
   this.isLoading = true;
   this.validationComplete = false;
 
-  Swal.fire({ title: 'Validando rostro...', didOpen: () => Swal.showLoading() });
+  this.mostrarAlertaCargaRostro();
 
   this.openIaService.analyzeImage(base64Data).subscribe(
     (response) => {
@@ -176,6 +177,7 @@ validatePhoto(imageBase64: string): void {
         this.isCorrectPhoto = true;
         this.validationMessage = "La imagen es válida y muestra una persona real.";
         console.log('✅ Foto válida y tomada en vivo:', response);
+        this.onSubmit();
       } else {
         this.isCorrectPhoto = false;
         this.validationMessage = response.razon || "La imagen no es válida.";
@@ -195,6 +197,260 @@ validatePhoto(imageBase64: string): void {
       console.error('Error en la validación:', error);
     }
   );
+}
+
+// Función separada para mostrar la alerta de carga del rostro
+private mostrarAlertaCargaRostro(): void {
+  Swal.fire({
+    title: '',
+    html: `
+      <style>
+        .loading-container {
+          text-align: center;
+          padding: 20px 0;
+        }
+        
+        .face-scanner {
+          position: relative;
+          width: 120px;
+          height: 120px;
+          margin: 0 auto 25px;
+          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+          border-radius: 50%;
+          border: 3px solid #cbd5e1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        
+        .face-icon {
+          font-size: 40px;
+          color: #64748b;
+          z-index: 2;
+          animation: faceFloat 2s ease-in-out infinite;
+        }
+        
+        .scan-circle {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 80px;
+          height: 80px;
+          border: 2px solid transparent;
+          border-top: 2px solid #3b82f6;
+          border-radius: 50%;
+          animation: rotateScan 1.5s linear infinite;
+        }
+        
+        .scan-circle::after {
+          content: '';
+          position: absolute;
+          top: -2px;
+          right: -2px;
+          width: 8px;
+          height: 8px;
+          background: #3b82f6;
+          border-radius: 50%;
+          box-shadow: 0 0 8px #3b82f6;
+        }
+        
+        .loading-title {
+          font-size: 22px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-bottom: 8px;
+          animation: titlePulse 2s ease-in-out infinite;
+        }
+        
+        .loading-subtitle {
+          font-size: 15px;
+          color: #64748b;
+          margin-bottom: 20px;
+          font-weight: 500;
+        }
+        
+        .progress-container {
+          width: 100%;
+          height: 6px;
+          background: #e2e8f0;
+          border-radius: 10px;
+          overflow: hidden;
+          margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+          height: 100%;
+          background: linear-gradient(90deg, #3b82f6, #1d4ed8, #3b82f6);
+          background-size: 200% 100%;
+          border-radius: 10px;
+          animation: progressFlow 1.5s ease-in-out infinite, progressGrow 3s ease-out infinite;
+        }
+        
+        .loading-steps {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 20px;
+          padding: 0 10px;
+        }
+        
+        .step {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          opacity: 0.3;
+          transition: all 0.5s ease;
+        }
+        
+        .step.active {
+          opacity: 1;
+        }
+        
+        .step-icon {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: #e2e8f0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 5px;
+          font-size: 14px;
+          transition: all 0.5s ease;
+        }
+        
+        .step.active .step-icon {
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+          color: white;
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .step-text {
+          font-size: 11px;
+          color: #64748b;
+          font-weight: 500;
+          text-align: center;
+        }
+        
+        .tip-container {
+          margin-top: 25px;
+          padding: 12px 16px;
+          background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+          border-radius: 10px;
+          border-left: 4px solid #3b82f6;
+        }
+        
+        .tip-text {
+          font-size: 13px;
+          color: #1e40af;
+          margin: 0;
+          font-weight: 500;
+        }
+        
+        @keyframes rotateScan {
+          0% { transform: translate(-50%, -50%) rotate(0deg); }
+          100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        @keyframes faceFloat {
+          0%, 100% { transform: translateY(0px) scale(1); }
+          50% { transform: translateY(-3px) scale(1.05); }
+        }
+        
+        @keyframes titlePulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        
+        @keyframes progressFlow {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        
+        @keyframes progressGrow {
+          0% { width: 0%; }
+          70% { width: 85%; }
+          100% { width: 100%; }
+        }
+        
+        .swal2-popup {
+          border-radius: 20px !important;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
+        }
+      </style>
+      
+      <div class="loading-container">
+        <div class="face-scanner">
+          <div class="face-icon">👤</div>
+          <div class="scan-circle"></div>
+        </div>
+        
+        <div class="loading-title">Analizando rostro</div>
+        <div class="loading-subtitle">Verificando autenticidad...</div>
+        
+        <div class="progress-container">
+          <div class="progress-bar"></div>
+        </div>
+        
+        <div class="loading-steps">
+          <div class="step active" id="face-step1">
+            <div class="step-icon">👁️</div>
+            <div class="step-text">Detectando</div>
+          </div>
+          <div class="step" id="face-step2">
+            <div class="step-icon">🧠</div>
+            <div class="step-text">Analizando</div>
+          </div>
+          <div class="step" id="face-step3">
+            <div class="step-icon">✓</div>
+            <div class="step-text">Verificando</div>
+          </div>
+        </div>
+        
+        <div class="tip-container">
+          <p class="tip-text">💡 Asegúrate de estar bien iluminado y mirando a la cámara</p>
+        </div>
+      </div>
+    `,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    background: '#ffffff',
+    width: '420px',
+    padding: '25px',
+    didOpen: () => {
+      // Animación de pasos secuencial para rostro
+      let currentStep = 1;
+      const stepInterval = setInterval(() => {
+        // Desactivar paso anterior
+        if (currentStep > 1) {
+          document.getElementById(`face-step${currentStep - 1}`)?.classList.remove('active');
+        }
+        
+        // Activar paso actual
+        if (currentStep <= 3) {
+          document.getElementById(`face-step${currentStep}`)?.classList.add('active');
+          currentStep++;
+        } else {
+          // Reiniciar ciclo
+          document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+          currentStep = 1;
+          document.getElementById('face-step1')?.classList.add('active');
+        }
+      }, 1200);
+      
+      // Guardar el intervalo para poder limpiarlo después
+      (window as any).loadingFaceStepInterval = stepInterval;
+    },
+    willClose: () => {
+      // Limpiar intervalo al cerrar
+      if ((window as any).loadingFaceStepInterval) {
+        clearInterval((window as any).loadingFaceStepInterval);
+      }
+    }
+  });
 }
 
 mostrarRecomendacionesFaciales(response: any): void {
@@ -219,17 +475,17 @@ mostrarRecomendacionesFaciales(response: any): void {
     html: `
       <style>
         .custom-title {
-          color: #2c3e50;
+          color: #1e293b;
           font-weight: 600;
           font-size: 1.3rem;
         }
         
         .recommendations-container {
-          background: linear-gradient(135deg, #fff5f5 0%, #fef2f2 100%);
+          background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
           border-radius: 12px;
           padding: 18px;
           margin: 15px 0;
-          border: 1px solid #fed7d7;
+          border: 1px solid #bae6fd;
         }
         
         .recommendation-item {
@@ -246,18 +502,18 @@ mostrarRecomendacionesFaciales(response: any): void {
         .rec-icon {
           width: 20px;
           height: 20px;
-          background: linear-gradient(135deg, #ef4444, #dc2626);
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           margin-right: 10px;
           color: white;
-          box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+          box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
         }
         
         .rec-text {
-          color: #2c3e50;
+          color: #1e293b;
           font-size: 14px;
           line-height: 1.3;
           font-weight: 500;
@@ -275,18 +531,18 @@ mostrarRecomendacionesFaciales(response: any): void {
         }
         
         .swal2-confirm {
-          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
           border: none !important;
           border-radius: 25px !important;
           padding: 10px 25px !important;
           font-weight: 600 !important;
-          box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4) !important;
+          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4) !important;
           transition: all 0.3s ease !important;
         }
         
         .swal2-confirm:hover {
           transform: translateY(-2px) !important;
-          box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6) !important;
+          box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6) !important;
         }
       </style>
       
@@ -317,20 +573,16 @@ mostrarRecomendacionesFaciales(response: any): void {
 }
 
 onSubmit(): void {
-  const datosRaw = localStorage.getItem('datosBasicos');
-
-  if (!datosRaw) {
-    console.error('No se encontraron datos en localStorage');
-    return;
-  }
-
   // Mostrar alerta de carga antes de continuar
-  this.mostrarAlertaCarga(); // ✅ <-- Agregado aquí
-
+  this.loaderService.show();
   // Enviar la imagen si existe
   if (this.photoBase64) {
+
     this.enviarImagenAzure();
+
   }
+
+  this.loaderService.hide();
 
   this.router.navigate(['/registro/codigo-otp']);
 }
@@ -339,7 +591,6 @@ onSubmit(): void {
 enviarImagenAzure(): void {
 
   const datosRaw = this.userSessionService.getDatosBasicos();
-
 
   if (!datosRaw || !this.photoBase64) {
     console.error('Faltan datos para enviar la imagen.');
@@ -369,21 +620,4 @@ enviarImagenAzure(): void {
   });
 }
 
-  mostrarAlertaCarga(): void {
-    Swal.fire({
-      title: '<span style="color: #00d9ff; font-weight: bold; font-size: 24px;">Pay</span>',
-      html: `
-        <p style="color: #333; font-size: 16px;">Espera un momento, estamos validando tu información</p>
-      `,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      background: '#fff',
-      padding: '20px',
-      width: '400px',
-    });
-  }
 }
